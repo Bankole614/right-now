@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/utils/constants.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -31,7 +32,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               Image.asset(
                 'assets/images/gavel.png',
                 height: 80,
-                color: const Color(0xFF3F51B5),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -83,7 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3F51B5),
+                    backgroundColor: kPrimaryBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
