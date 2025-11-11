@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/signup');
+                        Navigator.pushNamed(context, '/user-selection');
                       },
                       child: const Text(
                         'Sign Up',
@@ -161,14 +161,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.g_mobiledata,
-                                color: Colors.black87,
-                                size: 24,
+                            children: [
+                              Image.asset(
+                                'assets/images/google.png',
                               ),
-                              SizedBox(width: 8),
-                              Text(
+                              const SizedBox(width: 8),
+                              const Text(
                                 'Google',
                                 style: TextStyle(
                                   color: Colors.black87,

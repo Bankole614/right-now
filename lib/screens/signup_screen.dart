@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:right_now/utils/constants.dart';
 
-import 'login_screen.dart';
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -80,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _buildPrimaryButton(
                   text: 'Sign Up',
                   onPressed: () {
-                    Navigator.pushNamed(context, '/login');
+                    Navigator.pushNamed(context, '/verify');
                   },
                 ),
                 const SizedBox(height: 16),
@@ -115,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     Expanded(
                       child: _buildSocialButton(
-                        icon: Icons.g_mobiledata,
+                        imagePath: 'assets/images/google.png',
                         text: 'Google',
                         isGoogle: true,
                         onPressed: () {},
@@ -195,8 +193,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  // --- Updated _buildSocialButton to handle both Icon and Image ---
   Widget _buildSocialButton({
-    required IconData icon,
+    IconData? icon,
+    String? imagePath,
     required String text,
     required bool isGoogle,
     required VoidCallback onPressed,
@@ -217,11 +217,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: isGoogle ? Colors.black87 : Colors.white,
-              size: 24,
-            ),
+            // Conditionally display an Image or an Icon
+            if (imagePath != null)
+              Image.asset(
+                imagePath,
+                height: 24,
+                width: 24,
+              )
+            else if (icon != null)
+              Icon(
+                icon,
+                color: isGoogle ? Colors.black87 : Colors.white,
+                size: 24,
+              ),
             const SizedBox(width: 8),
             Text(
               text,
