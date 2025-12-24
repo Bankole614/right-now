@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:right_now/screens/widgets/lawyer_card.dart';
-
 import 'lawyer_profile.dart';
 
 class DiscoverScreen extends StatefulWidget {
@@ -18,9 +16,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     return {
       'name': 'Sarah Conor',
       'specialty': 'Family law',
-      'experience': '${6 + i} years experience',
+      'experience': '8 years experience',
       'rating': 5,
-      'reviews': 12 + i,
+      'reviews': 12,
       'avatar': 'https://i.pravatar.cc/150?img=${20 + i}',
     };
   });
@@ -29,72 +27,86 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discover', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Discover',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: const Color(0xFF2D4ED8),
+        elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(children: [
-          // Search
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-            child: Row(children: [
-              const Icon(Icons.search, color: Colors.black38),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: 'Search by name, specialization, or location',
-                    border: InputBorder.none,
-                  ),
-                ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Search bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
               ),
-            ]),
-          ),
-          const SizedBox(height: 10),
-
-          // Filters as chips
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _filterChip('All'),
-                _filterChip('Location'),
-                _filterChip('Rating'),
-                _filterChip('Fee'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Results list
-          Expanded(
-            child: ListView.builder(
-              itemCount: lawyers.length,
-              itemBuilder: (context, index) {
-                final item = lawyers[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: LawyerCard(
-                    name: item['name'],
-                    specialty: item['specialty'],
-                    experience: item['experience'],
-                    rating: item['rating'],
-                    reviews: item['reviews'],
-                    avatarUrl: item['avatar'],
-                    onBook: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => LawyerProfilePage(data: item)));
-                    },
+              child: Row(
+                children: [
+                  const Icon(Icons.search, color: Colors.black38),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Search by name, specialization, or location',
+                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                );
-              },
+                ],
+              ),
             ),
-          ),
-        ]),
+            const SizedBox(height: 16),
+
+            // Filter chips
+            SizedBox(
+              height: 40,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _filterChip('All'),
+                  _filterChip('Location'),
+                  _filterChip('Rating'),
+                  _filterChip('fee'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Lawyers list
+            Expanded(
+              child: ListView.builder(
+                itemCount: lawyers.length,
+                itemBuilder: (context, index) {
+                  final lawyer = lawyers[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _lawyerCard(
+                      context,
+                      lawyer['name'],
+                      lawyer['specialty'],
+                      lawyer['experience'],
+                      lawyer['rating'],
+                      lawyer['reviews'],
+                      lawyer['avatar'],
+                      lawyer,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -107,9 +119,118 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         label: Text(label),
         selected: selected,
         onSelected: (_) => setState(() => _selectedFilter = label),
-        selectedColor: Colors.indigo,
+        selectedColor: const Color(0xFF2D4ED8),
         backgroundColor: Colors.white,
-        labelStyle: TextStyle(color: selected ? Colors.white : Colors.black87),
+        labelStyle: TextStyle(
+          color: selected ? Colors.white : Colors.black87,
+          fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  Widget _lawyerCard(
+      BuildContext context,
+      String name,
+      String specialty,
+      String experience,
+      int rating,
+      int reviews,
+      String avatarUrl,
+      Map<String, dynamic> data,
+      ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(avatarUrl),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '$specialty · $experience',
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        ...List.generate(
+                          rating,
+                              (i) => const Icon(
+                            Icons.star,
+                            size: 16,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '($reviews)',
+                          style: const TextStyle(
+                            color: Colors.black45,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => LawyerProfilePage(data: data),
+                  ),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Booking consultation...')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2D4ED8),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Book Consultation',
+                style: TextStyle(fontSize: 13),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

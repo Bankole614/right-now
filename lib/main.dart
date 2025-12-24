@@ -68,7 +68,7 @@ ThemeData _lightTheme() {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: Color(0xFFF2F2F2),
     primaryColor: kPrimaryBlue,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
