@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+import 'home_screen.dart';
+
+class RootShell extends StatefulWidget {
+  const RootShell({super.key});
+
+  @override
+  State<RootShell> createState() => _RootShellState();
+}
+
+class _RootShellState extends State<RootShell> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = const [
+    HomeScreen(),
+    CasesScreen(),
+    DiscoverScreen(),
+    AIScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: IndexedStack(index: _selectedIndex, children: _pages),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.indigo[900],
+        unselectedItemColor: Colors.black54,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.folder_open), label: 'Cases'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Discover'),
+          BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: 'AI'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}

@@ -3,8 +3,8 @@ import 'package:right_now/utils/constants.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
-
   @override
+
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
