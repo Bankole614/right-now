@@ -2,10 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:right_now/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:right_now/screens/ai_screen.dart';
+import 'package:right_now/screens/cases_screen.dart';
 import 'package:right_now/screens/create_password_screen.dart';
+import 'package:right_now/screens/discover_screen.dart';
 import 'package:right_now/screens/forgot_password_screen.dart';
 import 'package:right_now/screens/login_screen.dart';
 import 'package:right_now/screens/onboarding_screen.dart';
+import 'package:right_now/screens/profile_screen.dart';
+import 'package:right_now/screens/root_shell.dart';
 import 'package:right_now/screens/signup_screen.dart';
 import 'package:right_now/screens/splash_screen.dart';
 import 'package:right_now/screens/user_selection_screen.dart';
@@ -49,6 +54,11 @@ class RightNow extends ConsumerWidget {
         '/verify': (_) => const VerifyAccountScreen(),
         '/forgot': (_) => const ForgotPasswordScreen(),
         '/reset': (_) => const CreatePasswordScreen(),
+        '/home': (_) => const RootShell(),
+        '/discover': (_) => const DiscoverScreen(),
+        '/cases': (_) => const CasesScreen(),
+        '/ai': (_) => const AIScreen(),
+        '/profile': (_) => const ProfileScreen(),
       },
     );
   }

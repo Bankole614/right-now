@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/profile_screen.dart';
 
+import 'ai_screen.dart';
+import 'cases_screen.dart';
+import 'discover_screen.dart';
 import 'home_screen.dart';
 
 class RootShell extends StatefulWidget {

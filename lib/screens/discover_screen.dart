@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/lawyer_card.dart';
+import 'package:right_now/screens/widgets/lawyer_card.dart';
+
+import 'lawyer_profile.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
