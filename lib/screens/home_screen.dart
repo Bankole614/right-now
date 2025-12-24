@@ -224,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                           'Mr. Brandon',
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 17,
                           ),
                         ),
@@ -233,7 +233,6 @@ class HomeScreen extends StatelessWidget {
                           'Family Lawyer',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -247,7 +246,7 @@ class HomeScreen extends StatelessWidget {
                       child: IconButton(
                         onPressed: () {},
                         icon: const Icon(Icons.call, color: kPrimaryBlue),
-                        iconSize: 20,
+                        iconSize: 24,
                       ),
                     ),
                   ],
@@ -302,21 +301,23 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Quick Actions Section
+  // Quick Actions Section
   Widget _buildQuickActionsSection() {
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        children: [          _buildQuickCard(
+          color: Color(0xFFFFFFE5),
+          icon: Icons.chat_outlined,
+          iconColor: Color(0xFFF2C94C), // Icon color for AI Assistant
+          title: 'AI Assistant',
+          subtitle: 'Get instant guidance on your case. Summarize your documents',
+          onTap: () {},
+        ),
           _buildQuickCard(
-            color: Colors.orange,
-            icon: Icons.chat_outlined,
-            title: 'AI Assistant',
-            subtitle: 'Get instant guidance on your case. Summarize your documents',
-            onTap: () {},
-          ),
-          _buildQuickCard(
-            color: const Color(0xFF4F6BF5),
+            color: const Color(0xFFE1E6FF),
             icon: Icons.search,
+            iconColor: Color(0xFF2F80ED), // Icon color for Discover
             title: 'Discover',
             subtitle: 'Search for lawyers willing to take up your cases.',
             onTap: () {},
@@ -330,6 +331,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildQuickCard({
     required Color color,
     required IconData icon,
+    required Color iconColor, // Added parameter for icon color
     required String title,
     required String subtitle,
     required VoidCallback onTap,
@@ -341,25 +343,24 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.only(right: 8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.all(12),
-                child: Icon(icon, color: Colors.white, size: 24),
+              // The container around the icon has been removed
+              Icon(
+                icon,
+                color: iconColor, // Use the new iconColor parameter
+                size: 32, // Increased size for better visibility
               ),
               const SizedBox(height: 12),
               Text(
                 title,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
+                  color: Color(0xFF3E3E3E),
                   fontSize: 18,
                 ),
               ),
@@ -367,7 +368,7 @@ class HomeScreen extends StatelessWidget {
               Text(
                 subtitle,
                 style: const TextStyle(
-                  color: Colors.black54,
+                  color: Color(0xFF4F4F4F),
                 ),
               ),
             ],
