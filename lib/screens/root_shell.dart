@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:right_now/screens/profile_screen.dart';
+import 'package:right_now/utils/constants.dart';
 
 import 'ai_screen.dart';
 import 'cases_screen.dart';
@@ -36,11 +37,11 @@ class _RootShellState extends State<RootShell> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.indigo[900],
+        selectedItemColor: kPrimaryBlue,
         unselectedItemColor: Colors.black54,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.folder_open), label: 'Cases'),
+          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'Cases'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Discover'),
           BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: 'AI'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),

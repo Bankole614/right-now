@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/utils/constants.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -6,14 +7,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -60,7 +61,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Row(
       children: [
-        CircleAvatar(
+        const CircleAvatar(
           backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'),
           radius: 24,
         ),
@@ -180,108 +181,122 @@ class HomeScreen extends StatelessWidget {
   // Appointment Card Widget
   Widget _buildAppointmentCard(BuildContext context) {
     return Container(
+      // The main container keeps the background image
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         image: const DecorationImage(
-          image: NetworkImage(
-            'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800',
-          ),
+          image: AssetImage('assets/images/back.jpg'),
           fit: BoxFit.cover,
         ),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF2D4ED8).withOpacity(0.9),
-              const Color(0xFF4F6BF5).withOpacity(0.9),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 2,
+      padding: const EdgeInsets.all(16), // Restored original padding
+      child: Column(
+        children: [
+          Row(
+            children: [
+              // AVATAR
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 2,
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 30,
+                  backgroundImage:
+                  NetworkImage('https://i.pravatar.cc/150?img=12'),
                 ),
               ),
-              child: const CircleAvatar(
-                radius: 30,
-                backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=12'),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Mr. Brandon',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                            ),
+              const SizedBox(width: 14),
+              // NAME, TITLE, AND CALL BUTTON
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // NAME AND TITLE
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Mr. Brandon',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Family Lawyer',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Family Lawyer',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
                           ),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
                         ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.call, color: Colors.white),
-                          iconSize: 20,
-                        ),
+                      ],
+                    ),
+                    // CALL BUTTON
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: const [
-                      Icon(Icons.calendar_today, size: 13, color: Colors.white70),
-                      SizedBox(width: 6),
-                      Text(
-                        'July 8, 2025',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.call, color: kPrimaryBlue),
+                        iconSize: 20,
                       ),
-                      SizedBox(width: 16),
-                      Icon(Icons.access_time, size: 13, color: Colors.white70),
-                      SizedBox(width: 6),
-                      Text(
-                        '10:30am - 11:30am',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // DATE AND TIME SECTION
+          Container(
+            // 1. Set background to semi-transparent white
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10), // Added some rounding
             ),
-          ],
-        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Date
+                Row(
+                  children: const [
+                    // 2. Change icon color for readability
+                    Icon(Icons.calendar_today, size: 20, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'July 8, 2025',
+                      // 3. Change text color for readability
+                      style: TextStyle(color: Colors.white,),
+                    ),
+                  ],
+                ),
+                // Time
+                Row(
+                  children: const [
+                    // 2. Change icon color for readability
+                    Icon(Icons.access_time, size: 20, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      '10:30am - 11:30am',
+                      // 3. Change text color for readability
+                      style: TextStyle(color: Colors.white,),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -294,9 +309,9 @@ class HomeScreen extends StatelessWidget {
         children: [
           _buildQuickCard(
             color: Colors.orange,
-            icon: Icons.smart_toy,
+            icon: Icons.chat_outlined,
             title: 'AI Assistant',
-            subtitle: 'Get instant guidance on your case.',
+            subtitle: 'Get instant guidance on your case. Summarize your documents',
             onTap: () {},
           ),
           _buildQuickCard(
@@ -331,7 +346,6 @@ class HomeScreen extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -346,7 +360,7 @@ class HomeScreen extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 18,
                 ),
               ),
               const SizedBox(height: 6),
@@ -354,7 +368,6 @@ class HomeScreen extends StatelessWidget {
                 subtitle,
                 style: const TextStyle(
                   color: Colors.black54,
-                  fontSize: 11,
                 ),
               ),
             ],
@@ -406,12 +419,20 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ],
       ),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=$avatarId'),
-            radius: 22,
+            backgroundImage:
+            NetworkImage('https://i.pravatar.cc/150?img=$avatarId'),
+            radius: 24,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -432,7 +453,6 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.black54,
                     fontSize: 12,
                   ),
-                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
