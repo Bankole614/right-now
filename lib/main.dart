@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import the package
 import 'package:right_now/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:right_now/screens/ai_screen.dart';
@@ -68,6 +69,8 @@ ThemeData _lightTheme() {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    // Set the global font family for the light theme
+    fontFamily: GoogleFonts.inter().fontFamily,
     scaffoldBackgroundColor: Color(0xFFF2F2F2),
     primaryColor: kPrimaryBlue,
     appBarTheme: const AppBarTheme(
@@ -118,6 +121,8 @@ ThemeData _darkTheme() {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
+    // Set the global font family for the dark theme
+    fontFamily: GoogleFonts.urbanist().fontFamily,
     scaffoldBackgroundColor: const Color(0xFF121212),
     primaryColor: kPrimaryBlue,
     appBarTheme: const AppBarTheme(
