@@ -105,7 +105,7 @@ ThemeData _lightTheme() {
       primary: kPrimaryBlue,
       secondary: kSecondaryBlue,
       surface: Colors.white,
-      background: Colors.grey[50]!,
+      background: Color(0xFFF2F2F2),
       onSurface: Colors.black87,
     ),
     cardTheme: CardThemeData(
