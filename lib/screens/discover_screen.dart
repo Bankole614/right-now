@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lawyer_profile.dart';
+import 'lawyer_profile.dart'; // Uncomment this when you have the lawyer_profile.dart file
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -34,16 +34,18 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             color: Colors.white,
           ),
         ),
-        centerTitle: true,
         backgroundColor: const Color(0xFF2D4ED8),
-        elevation: 0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            const SizedBox(height: 16),
             // Search bar
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -51,7 +53,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, color: Colors.black38),
+                  const Icon(Icons.search, color: Colors.black38, size: 22),
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextField(
@@ -60,6 +62,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         hintText: 'Search by name, specialization, or location',
                         hintStyle: TextStyle(color: Colors.black38, fontSize: 14),
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
@@ -91,15 +94,29 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   final lawyer = lawyers[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _lawyerCard(
-                      context,
-                      lawyer['name'],
-                      lawyer['specialty'],
-                      lawyer['experience'],
-                      lawyer['rating'],
-                      lawyer['reviews'],
-                      lawyer['avatar'],
-                      lawyer,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navigate to lawyer profile
+                        // Uncomment when you have the lawyer_profile.dart file
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => LawyerProfilePage(data: lawyer),
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Opening ${lawyer['name']} profile...')),
+                        );
+                      },
+                      child: _lawyerCard(
+                        context,
+                        lawyer['name'],
+                        lawyer['specialty'],
+                        lawyer['experience'],
+                        lawyer['rating'],
+                        lawyer['reviews'],
+                        lawyer['avatar'],
+                        lawyer,
+                      ),
                     ),
                   );
                 },
@@ -207,14 +224,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => LawyerProfilePage(data: data),
-                  ),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Booking consultation...')),
-                );
+                // Prevent button click from propagating to card
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2D4ED8),
