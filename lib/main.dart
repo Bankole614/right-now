@@ -156,11 +156,14 @@ ThemeData _darkTheme() {
       hintStyle: TextStyle(color: Colors.grey[500]),
     ),
     colorScheme: ColorScheme.dark(
-      // primary: kPrimaryBlue,
-      // secondary: kSecondaryBlue,
+      primary: kPrimaryBlue,
+      secondary: kSecondaryBlue,
       surface: const Color(0xFF1E1E1E),
       background: const Color(0xFF121212),
       onSurface: Colors.white,
+      // Add more if needed
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
     ),
     cardTheme: CardThemeData(
       color: const Color(0xFF1E1E1E),

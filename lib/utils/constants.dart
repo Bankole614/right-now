@@ -15,6 +15,10 @@ const Color kNavBarGrey = Color(0xFFF5F5F5);
 const Color kInactiveGrey = Color(0xFF9E9E9E);
 const Color kGradientStart = Color(0xFF1D8ADF);
 const Color kGradientEnd = Color(0xFF283593);
+// Consider defining dark mode specific constants
+const Color kDarkBackground = Color(0xFF121212);
+const Color kDarkSurface = Color(0xFF1E1E1E);
+const Color kDarkText = Colors.white;
 
 BoxDecoration kBlueGradient(double radius) => BoxDecoration(
   gradient: const LinearGradient(

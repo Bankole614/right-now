@@ -6,11 +6,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(),
+            _buildAppBar(theme),
             Expanded(
               child: SingleChildScrollView(
                 padding:
@@ -18,15 +21,15 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(),
+                    _buildHeader(isDark),
                     const SizedBox(height: 24),
-                    _buildStatisticsSection(),
+                    _buildStatisticsSection(theme, isDark),
                     const SizedBox(height: 24),
-                    _buildAppointmentSection(context),
+                    _buildAppointmentSection(context, isDark),
                     const SizedBox(height: 20),
-                    _buildQuickActionsSection(),
+                    _buildQuickActionsSection(theme, isDark),
                     const SizedBox(height: 24),
-                    _buildRecentMessagesSection(),
+                    _buildRecentMessagesSection(theme, isDark),
                     const SizedBox(height: 80),
                   ],
                 ),
@@ -39,16 +42,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   // App Bar
-  Widget _buildAppBar() {
+  Widget _buildAppBar(ThemeData theme) {
     return Container(
-      color: const Color(0xFFF3F4F6),
+      color: theme.colorScheme.surface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: const Align(
+      child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
           'Client Dashboard',
           style: TextStyle(
-            color: Colors.black87,
+            color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -58,7 +61,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Header with user info
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Row(
       children: [
         const CircleAvatar(
@@ -69,20 +72,21 @@ class HomeScreen extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Hello,',
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: isDark ? Colors.grey[400] : Colors.black54,
                   fontSize: 13,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 'John Doe',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
             ],
@@ -90,22 +94,27 @@ class HomeScreen extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.notifications_none, size: 26),
+          icon: Icon(
+            Icons.notifications_none,
+            size: 26,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
       ],
     );
   }
 
   // Statistics Section
-  Widget _buildStatisticsSection() {
+  Widget _buildStatisticsSection(ThemeData theme, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Statistics',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 12),
@@ -113,9 +122,9 @@ class HomeScreen extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildStatisticsCard('4', 'Active Cases'),
-              _buildStatisticsCard('3', 'Unread Messages'),
-              _buildStatisticsCard('2', 'Upcoming Hearings'),
+              _buildStatisticsCard('4', 'Active Cases', theme, isDark),
+              _buildStatisticsCard('3', 'Unread Messages', theme, isDark),
+              _buildStatisticsCard('2', 'Upcoming Hearings', theme, isDark),
             ],
           ),
         ),
@@ -124,14 +133,21 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Statistics Card Widget
-  Widget _buildStatisticsCard(String value, String label) {
+  Widget _buildStatisticsCard(String value, String label, ThemeData theme, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
         margin: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardTheme.color ?? theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: isDark ? null : [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -139,17 +155,17 @@ class HomeScreen extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.black54,
                 fontSize: 12,
               ),
               textAlign: TextAlign.center,
@@ -161,27 +177,27 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Today's Appointment Section
-  Widget _buildAppointmentSection(BuildContext context) {
+  Widget _buildAppointmentSection(BuildContext context, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Today's Appointment",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 12),
-        _buildAppointmentCard(context),
+        _buildAppointmentCard(context, isDark),
       ],
     );
   }
 
   // Appointment Card Widget
-  Widget _buildAppointmentCard(BuildContext context) {
+  Widget _buildAppointmentCard(BuildContext context, bool isDark) {
     return Container(
-      // The main container keeps the background image
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         image: const DecorationImage(
@@ -189,7 +205,7 @@ class HomeScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      padding: const EdgeInsets.all(16), // Restored original padding
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Row(
@@ -245,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () {},
-                        icon: const Icon(Icons.call, color: kPrimaryBlue),
+                        icon: Icon(Icons.call, color: kPrimaryBlue),
                         iconSize: 24,
                       ),
                     ),
@@ -257,11 +273,10 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 16),
           // DATE AND TIME SECTION
           Container(
-            // 1. Set background to semi-transparent white
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10), // Added some rounding
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,26 +284,22 @@ class HomeScreen extends StatelessWidget {
                 // Date
                 Row(
                   children: const [
-                    // 2. Change icon color for readability
                     Icon(Icons.calendar_today, size: 20, color: Colors.white),
                     SizedBox(width: 6),
                     Text(
                       'July 8, 2025',
-                      // 3. Change text color for readability
-                      style: TextStyle(color: Colors.white,),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
                 // Time
                 Row(
                   children: const [
-                    // 2. Change icon color for readability
                     Icon(Icons.access_time, size: 20, color: Colors.white),
                     SizedBox(width: 6),
                     Text(
                       '10:30am - 11:30am',
-                      // 3. Change text color for readability
-                      style: TextStyle(color: Colors.white,),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
@@ -301,25 +312,29 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Quick Actions Section
-  // Quick Actions Section
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(ThemeData theme, bool isDark) {
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [          _buildQuickCard(
-          color: Color(0xFFFFFFE5),
-          icon: Icons.chat_outlined,
-          iconColor: Color(0xFFF2C94C), // Icon color for AI Assistant
-          title: 'AI Assistant',
-          subtitle: 'Get instant guidance on your case. Summarize your documents',
-          onTap: () {},
-        ),
+        children: [
           _buildQuickCard(
-            color: const Color(0xFFE1E6FF),
+            color: isDark ? const Color(0xFF2D2B1E) : const Color(0xFFFFFFE5),
+            icon: Icons.chat_outlined,
+            iconColor: const Color(0xFFF2C94C),
+            title: 'AI Assistant',
+            subtitle: 'Get instant guidance on your case. Summarize your documents',
+            textColor: isDark ? Colors.white : const Color(0xFF3E3E3E),
+            subtitleColor: isDark ? Colors.grey[400] : const Color(0xFF4F4F4F),
+            onTap: () {},
+          ),
+          _buildQuickCard(
+            color: isDark ? const Color(0xFF1A1F2E) : const Color(0xFFE1E6FF),
             icon: Icons.search,
-            iconColor: Color(0xFF2F80ED), // Icon color for Discover
+            iconColor: const Color(0xFF2F80ED),
             title: 'Discover',
             subtitle: 'Search for lawyers willing to take up your cases.',
+            textColor: isDark ? Colors.white : const Color(0xFF3E3E3E),
+            subtitleColor: isDark ? Colors.grey[400] : const Color(0xFF4F4F4F),
             onTap: () {},
           ),
         ],
@@ -331,9 +346,11 @@ class HomeScreen extends StatelessWidget {
   Widget _buildQuickCard({
     required Color color,
     required IconData icon,
-    required Color iconColor, // Added parameter for icon color
+    required Color iconColor,
     required String title,
     required String subtitle,
+    required Color textColor,
+    required Color? subtitleColor,
     required VoidCallback onTap,
   }) {
     return Expanded(
@@ -349,26 +366,25 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // The container around the icon has been removed
               Icon(
                 icon,
-                color: iconColor, // Use the new iconColor parameter
-                size: 32, // Increased size for better visibility
+                color: iconColor,
+                size: 32,
               ),
               const SizedBox(height: 12),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF3E3E3E),
+                  color: textColor,
                   fontSize: 18,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  color: Color(0xFF4F4F4F),
+                style: TextStyle(
+                  color: subtitleColor,
                 ),
               ),
             ],
@@ -379,15 +395,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Recent Messages Section
-  Widget _buildRecentMessagesSection() {
+  Widget _buildRecentMessagesSection(ThemeData theme, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Recent Messages',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 12),
@@ -396,12 +413,16 @@ class HomeScreen extends StatelessWidget {
           message: 'Please, send me the latest update on the contract.',
           timeAgo: '2 days ago',
           avatarId: '5',
+          theme: theme,
+          isDark: isDark,
         ),
         _buildRecentMessageItem(
           name: 'Peter Gray',
           message: 'Thanks, I received the documents.',
           timeAgo: '3 days ago',
           avatarId: '8',
+          theme: theme,
+          isDark: isDark,
         ),
       ],
     );
@@ -413,14 +434,16 @@ class HomeScreen extends StatelessWidget {
     required String message,
     required String timeAgo,
     required String avatarId,
+    required ThemeData theme,
+    required bool isDark,
   }) {
     return Container(
       padding: const EdgeInsets.all(14),
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: isDark ? null : [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
@@ -442,16 +465,17 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   message,
-                  style: const TextStyle(
-                    color: Colors.black54,
+                  style: TextStyle(
+                    color: isDark ? Colors.grey[400] : Colors.black54,
                     fontSize: 12,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -461,8 +485,8 @@ class HomeScreen extends StatelessWidget {
           ),
           Text(
             timeAgo,
-            style: const TextStyle(
-              color: Colors.black45,
+            style: TextStyle(
+              color: isDark ? Colors.grey[500] : Colors.black45,
               fontSize: 11,
             ),
           ),
