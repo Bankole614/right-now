@@ -163,16 +163,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Log out'),
-        content: const Text('Are you sure you want to log out?'),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          'Log out',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
+        content: Text(
+          'Are you sure you want to log out?',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Log out'),
+            child: Text(
+              'Log out',
+              style: TextStyle(color: kPrimaryBlue),
+            ),
           ),
         ],
       ),
@@ -180,7 +193,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     if (confirm != true) return;
     try {
-
       // IMPORTANT: use rootNavigator so we replace the entire app stack (MaterialApp navigator)
       if (!mounted) return;
       Navigator.of(
@@ -190,7 +202,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to log out: ${e.toString()}')),
+        SnackBar(
+          content: Text('Failed to log out: ${e.toString()}'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     }
   }
@@ -218,7 +233,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account deleted (UI-only).')),
+        SnackBar(
+          content: const Text('Account deleted (UI-only).'),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+        ),
       );
 
       Navigator.of(
@@ -228,7 +246,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete account: ${e.toString()}')),
+        SnackBar(
+          content: Text('Failed to delete account: ${e.toString()}'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _deletingAccount = false);
@@ -237,11 +258,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Profile',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -252,53 +275,109 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         automaticallyImplyLeading: false,
       ),
       body: Column(
-          children: [
-
-            // Menu items section
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    _buildProfileHeader(),
-                    const SizedBox(height: 12),
-                    _tile(
-                      icon: Icons.person_outline,
-                      label: 'Edit Profile',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const EditProfileScreen(),
-                        ),
+        children: [
+          // Menu items section
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildProfileHeader(isDark),
+                  const SizedBox(height: 12),
+                  _tile(
+                    icon: Icons.person_outline,
+                    label: 'Edit Profile',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const EditProfileScreen(),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
+                  const SizedBox(height: 12),
 
-                    _tile(
-                      icon: Icons.lock_outline,
-                      label: 'Security',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SecurityScreen(),
-                        ),
+                  _tile(
+                    icon: Icons.lock_outline,
+                    label: 'Security',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SecurityScreen(),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
+                  const SizedBox(height: 12),
 
-                    // Biometric Login with switch
-                    Container(
+                  // Biometric Login with switch
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isDark
+                              ? Colors.black.withOpacity(0.4)
+                              : Colors.black.withOpacity(0.02),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.fingerprint,
+                          color: theme.colorScheme.onSurface,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Biometric Login',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                        Switch(
+                          value: _biometricEnabled,
+                          onChanged: (v) => setState(() => _biometricEnabled = v),
+                          activeColor: kPrimaryBlue,
+                          trackColor: MaterialStateProperty.resolveWith((states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return kPrimaryBlue.withOpacity(0.5);
+                            }
+                            return isDark ? Colors.grey[700] : Colors.grey[300];
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Appearance tile: toggle expansion to show inline control below
+                  InkWell(
+                    onTap: () => setState(
+                          () => _appearanceExpanded = !_appearanceExpanded,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 16,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
+                        color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                            Theme.of(context).brightness == Brightness.dark
+                            color: isDark
                                 ? Colors.black.withOpacity(0.4)
                                 : Colors.black.withOpacity(0.02),
                             blurRadius: 8,
@@ -309,172 +388,112 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.fingerprint,
-                            color: Theme.of(context).colorScheme.onSurface,
+                            Icons.palette_outlined,
+                            color: theme.colorScheme.onSurface,
                             size: 22,
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              'Biometric Login',
+                              'Appearance',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: theme.colorScheme.onSurface,
                               ),
                             ),
                           ),
-                          Switch(
-                            value: _biometricEnabled,
-                            onChanged: (v) =>
-                                setState(() => _biometricEnabled = v),
-                            activeColor: kPrimaryBlue,
+                          // show chevron rotates based on expansion state
+                          Transform.rotate(
+                            angle: _appearanceExpanded ? math.pi : 0,
+                            child: Icon(
+                              Icons.expand_more,
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
 
-                    // Appearance tile: toggle expansion to show inline control below
-                    InkWell(
-                      onTap: () => setState(
-                            () => _appearanceExpanded = !_appearanceExpanded,
-                      ),
+                  // Inline appearance control (only shown when expanded)
+                  if (_appearanceExpanded) _buildAppearanceRow(),
+
+                  const SizedBox(height: 12),
+
+                  _tile(
+                    icon: Icons.logout_outlined,
+                    label: _loggingOut ? 'Logging out...' : 'Log Out',
+                    onTap: () {
+                      _confirmAndLogout();
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Delete account button - wired to the bottom sheet
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF7F1D1D).withOpacity(0.3) // Dark red for dark theme
+                          : const Color(0xFFFEE2E2), // Light red for light theme
                       borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
+                    ),
+                    child: TextButton(
+                      onPressed: _deletingAccount ? null : _onDeleteAccountPressed,
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                              Theme.of(context).brightness ==
-                                  Brightness.dark
-                                  ? Colors.black.withOpacity(0.4)
-                                  : Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.palette_outlined,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              size: 22,
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Appearance',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                            // show chevron rotates based on expansion state
-                            Transform.rotate(
-                              angle: _appearanceExpanded ? math.pi : 0,
-                              child: Icon(
-                                Icons.expand_more,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withOpacity(0.6),
-                              ),
-                            ),
-                          ],
+                      ),
+                      child: _deletingAccount
+                          ? SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: isDark
+                              ? const Color(0xFFFECACA)
+                              : const Color(0xFFF63A3A),
+                        ),
+                      )
+                          : Text(
+                        'Delete Account',
+                        style: TextStyle(
+                          color: isDark
+                              ? const Color(0xFFFECACA) // Light red text for dark theme
+                              : const Color(0xFFF63A3A), // Dark red text for light theme
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-
-                    // Inline appearance control (only shown when expanded)
-                    if (_appearanceExpanded) _buildAppearanceRow(),
-
-                    const SizedBox(height: 12),
-
-                    _tile(
-                      icon: Icons.logout_outlined,
-                      label: _loggingOut ? 'Logging out...' : 'Log Out',
-                      onTap: () {
-                        _confirmAndLogout();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Delete account button - wired to the bottom sheet
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF7F1D1D) // Dark red for dark theme
-                            : const Color(0xFFFEE2E2),
-                        // Light red for light theme
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: TextButton(
-                        onPressed: _deletingAccount
-                            ? null
-                            : _onDeleteAccountPressed,
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: _deletingAccount
-                            ? SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color:
-                            Theme.of(context).brightness ==
-                                Brightness.dark
-                                ? const Color(0xFFFECACA)
-                                : const Color(0xFFF63A3A),
-                          ),
-                        )
-                            : Text(
-                          'Delete Account',
-                          style: TextStyle(
-                            color:
-                            Theme.of(context).brightness ==
-                                Brightness.dark
-                                ? const Color(
-                              0xFFFECACA,
-                            ) // Light red text for dark theme
-                                : const Color(0xFFF63A3A),
-                            // Dark red text for light theme
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(bool isDark) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
       child: Column(
@@ -486,16 +505,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const SizedBox(height: 16),
           Text(
             'John Doe',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Civil Law',
             style: TextStyle(
-              color: Colors.black54,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               fontSize: 14,
             ),
           ),
@@ -505,18 +525,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               ...List.generate(
                 5,
-                    (i) => const Icon(
+                    (i) => Icon(
                   Icons.star,
                   color: Colors.amber,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '(12)',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                 ),
               ),
             ],
