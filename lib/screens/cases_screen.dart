@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/create_case_screen.dart';
+import 'package:right_now/utils/constants.dart';
 
 class CasesScreen extends StatefulWidget {
   const CasesScreen({super.key});
@@ -50,7 +52,6 @@ class _CasesScreenState extends State<CasesScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2D4ED8),
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
@@ -64,7 +65,6 @@ class _CasesScreenState extends State<CasesScreen> {
         children: [
           // Search and Filter Section
           Container(
-            color: Colors.white,
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -173,13 +173,12 @@ class _CasesScreenState extends State<CasesScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to create case
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (_) => const CreateCaseScreen()),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const CreateCaseScreen()),
+          );
         },
-        backgroundColor: const Color(0xFF2D4ED8),
+        backgroundColor: Constants.kPrimaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -190,7 +189,7 @@ class _CasesScreenState extends State<CasesScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -221,29 +220,12 @@ class _CasesScreenState extends State<CasesScreen> {
     );
   }
 
-  Widget _filterChip(String label) {
-    final selected = _selectedFilter == label;
-    return InkWell(
-      onTap: () => setState(() => _selectedFilter = label),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF2D4ED8) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : Colors.black87,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildCaseCard(Map<String, dynamic> caseItem) {
+    // Define colors based on status
+    final bool isPending = caseItem['status'] == 'Pending';
+    final Color statusColor = isPending ? Colors.orange.shade800 : const Color(0xFF2D4ED8);
+    final Color statusBackgroundColor = isPending ? Colors.orange.withOpacity(0.1) : const Color(0xFF2D4ED8).withOpacity(0.1);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -253,6 +235,18 @@ class _CasesScreenState extends State<CasesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: caseItem['progress'],
+              backgroundColor: Colors.grey.shade200,
+              valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
+              minHeight: 6,
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Header with title and status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,47 +260,21 @@ class _CasesScreenState extends State<CasesScreen> {
                   ),
                 ),
               ),
-              if (caseItem['participants'] != null)
-                Row(
-                  children: List.generate(
-                    caseItem['participants'].length,
-                        (i) => Container(
-                      margin: const EdgeInsets.only(left: 4),
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: i == 0 ? const Color(0xFF2D4ED8) : Colors.purple,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          caseItem['participants'][i],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D4ED8).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    caseItem['status'],
-                    style: const TextStyle(
-                      color: Color(0xFF2D4ED8),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: statusBackgroundColor, // Use the dynamic background color
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  caseItem['status'],
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -321,49 +289,46 @@ class _CasesScreenState extends State<CasesScreen> {
           ),
           const SizedBox(height: 12),
 
-          // Hearing info
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2D4ED8).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  caseItem['hearing'],
-                  style: const TextStyle(
-                    color: Color(0xFF2D4ED8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: Color(0xFF2D4ED8),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
 
-          // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: caseItem['progress'],
-              backgroundColor: Colors.grey.shade200,
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2D4ED8)),
-              minHeight: 6,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2D4ED8).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      caseItem['hearing'],
+                      style: const TextStyle(
+                        color: kPrimaryBlue,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: kPrimaryBlue,
+                  borderRadius: BorderRadius.circular(48),
+                ),
+                child: const Icon(Icons.chevron_right, size: 24, color: Colors.white),
+              ),
+            ],
           ),
+
         ],
       ),
     );
   }
+
 
   @override
   void dispose() {
