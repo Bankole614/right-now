@@ -51,7 +51,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
       ),
       body: Column(
         children: [
-          // Step Indicator
           Container(
             color: cardBackgroundColor,
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
