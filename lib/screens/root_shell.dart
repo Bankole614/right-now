@@ -39,8 +39,8 @@ class _RootShellState extends State<RootShell> {
           color: theme.colorScheme.surface,
           border: Border(
             top: BorderSide(
-              color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-              width: 0.5,
+              color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+              width: 1,
             ),
           ),
           boxShadow: [
@@ -105,12 +105,12 @@ class _RootShellState extends State<RootShell> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.smart_toy_outlined,
+                Icons.psychology_outlined,
                 color: _selectedIndex == 3
                     ? kPrimaryBlue
                     : (isDark ? Colors.grey[400] : Colors.grey[600]),
               ),
-              activeIcon: const Icon(Icons.smart_toy, color: kPrimaryBlue),
+              activeIcon: const Icon(Icons.psychology, color: kPrimaryBlue),
               label: 'AI',
             ),
             BottomNavigationBarItem(

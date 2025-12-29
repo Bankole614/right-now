@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/case_details_screen.dart';
 import 'package:right_now/screens/create_case_screen.dart';
 import 'package:right_now/utils/constants.dart';
 
@@ -13,6 +14,7 @@ class _CasesScreenState extends State<CasesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'All';
 
+  // Dummy data for cases
   final List<Map<String, dynamic>> cases = [
     {
       'title': 'John vs Nigerian Govt.',
@@ -31,17 +33,20 @@ class _CasesScreenState extends State<CasesScreen> {
       'progress': 0.35,
     },
     {
-      'title': 'Food Co. vs Jane',
-      'client': 'Jane Smith',
-      'type': 'Contract dispute',
-      'status': 'Pending',
-      'hearing': 'Next Hearing: Nov 20 · Courtroom B',
-      'progress': 0.15,
+      'title': 'Property Damage Claim',
+      'client': 'Alice Johnson',
+      'type': 'Tort Law',
+      'status': 'Active',
+      'hearing': 'Next Hearing: Dec 5 · Courtroom A',
+      'progress': 0.50,
     },
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -78,11 +83,15 @@ class _CasesScreenState extends State<CasesScreen> {
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search cases',
-                              hintStyle: const TextStyle(color: Colors.black38),
+                              hintStyle: TextStyle(
+                                color: isDark ? Colors.grey[400] : Colors.black38,
+                              ),
                               filled: true,
-                              fillColor: const Color(0xFFF3F4F6),
+                              fillColor: isDark
+                                  ? const Color(0xFF1E1E1E)
+                                  : const Color(0xFFF3F4F6),
                               contentPadding: const EdgeInsets.only(
-                                left: 48, // Space for the icon
+                                left: 48,
                                 right: 16,
                                 top: 14,
                                 bottom: 14,
@@ -90,30 +99,37 @@ class _CasesScreenState extends State<CasesScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade300, // Border color
+                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
                                   width: 1.0,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade300, // Border color
+                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
                                   width: 1.0,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFF2D4ED8), // Border color on focus
+                                  color: kPrimaryBlue,
                                   width: 1.5,
                                 ),
                               ),
                             ),
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
                           ),
                           // Positioned Search Icon
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16.0),
-                            child: Icon(Icons.search, color: Colors.black38, size: 22),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Icon(
+                                Icons.search,
+                                color: isDark ? Colors.grey[400] : Colors.black38,
+                                size: 22
+                            ),
                           ),
                         ],
                       ),
@@ -122,16 +138,24 @@ class _CasesScreenState extends State<CasesScreen> {
                     // Filter Button
                     InkWell(
                       onTap: () {
-                        _showFilterDialog(context);
+                        _showFilterDialog(context, isDark);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF3F4F6),
+                          color: isDark
+                              ? const Color(0xFF1E1E1E)
+                              : const Color(0xFFF3F4F6),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
+                          border: Border.all(
+                            color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
+                          ),
                         ),
-                        child: const Icon(Icons.tune, size: 22, color: Colors.black54),
+                        child: Icon(
+                            Icons.tune,
+                            size: 22,
+                            color: isDark ? Colors.grey[400] : Colors.black54
+                        ),
                       ),
                     ),
                   ],
@@ -143,11 +167,11 @@ class _CasesScreenState extends State<CasesScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildStatCard('4', 'Active Cases'),
+                      _buildStatCard('4', 'Active Cases', isDark),
                       const SizedBox(width: 8),
-                      _buildStatCard('3', 'Unread Messages'),
+                      _buildStatCard('3', 'Unread Messages', isDark),
                       const SizedBox(width: 8),
-                      _buildStatCard('2', 'Upcoming Hearings'),
+                      _buildStatCard('2', 'Upcoming Hearings', isDark),
                     ],
                   ),
                 ),
@@ -158,13 +182,14 @@ class _CasesScreenState extends State<CasesScreen> {
           // Cases List
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // Modified padding
               itemCount: cases.length,
               itemBuilder: (context, index) {
                 final caseItem = cases[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: _buildCaseCard(caseItem),
+                  // MODIFICATION: Pass context to the build method
+                  child: _buildCaseCard(context, caseItem, isDark),
                 );
               },
             ),
@@ -178,19 +203,28 @@ class _CasesScreenState extends State<CasesScreen> {
             MaterialPageRoute(builder: (_) => const CreateCaseScreen()),
           );
         },
-        backgroundColor: Constants.kPrimaryBlue,
+        backgroundColor: kPrimaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildStatCard(String value, String label) {
+  Widget _buildStatCard(String value, String label, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark
+              ? const Color(0xFF1E1E1E)
+              : Colors.white,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: isDark ? null : [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -198,18 +232,19 @@ class _CasesScreenState extends State<CasesScreen> {
           children: [
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 22,
+              style: TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.black54,
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey[400] : Colors.black54,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -220,115 +255,143 @@ class _CasesScreenState extends State<CasesScreen> {
     );
   }
 
-  Widget _buildCaseCard(Map<String, dynamic> caseItem) {
+  // MODIFICATION: Wrapped card in InkWell, added navigation logic, and accepted BuildContext
+  Widget _buildCaseCard(BuildContext context, Map<String, dynamic> caseItem, bool isDark) {
     // Define colors based on status
     final bool isPending = caseItem['status'] == 'Pending';
-    final Color statusColor = isPending ? Colors.orange.shade800 : const Color(0xFF2D4ED8);
-    final Color statusBackgroundColor = isPending ? Colors.orange.withOpacity(0.1) : const Color(0xFF2D4ED8).withOpacity(0.1);
+    final Color statusColor = isPending
+        ? (isDark ? Colors.orange[300]! : Colors.orange.shade800)
+        : kPrimaryBlue;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: caseItem['progress'],
-              backgroundColor: Colors.grey.shade200,
-              valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
-              minHeight: 6,
+    final Color statusBackgroundColor = isPending
+        ? (isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.withOpacity(0.1))
+        : kPrimaryBlue.withOpacity(isDark ? 0.2 : 0.1);
+
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CaseDetailsScreen(),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Tapped on: ${caseItem['title']}')),
+        );
+      },
+      borderRadius: BorderRadius.circular(12), // Match the container's border radius
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFF1E1E1E)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: isDark ? null : [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // Header with title and status
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  caseItem['title'],
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Progress bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: caseItem['progress'],
+                backgroundColor: isDark ? Colors.grey[800] : Colors.grey.shade200,
+                valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
+                minHeight: 6,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: statusBackgroundColor, // Use the dynamic background color
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  caseItem['status'],
-                  style: TextStyle(
-                    color: statusColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Client info
-          Text(
-            'Client: ${caseItem['client']} · ${caseItem['type']}',
-            style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 13,
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2D4ED8).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      caseItem['hearing'],
-                      style: const TextStyle(
-                        color: kPrimaryBlue,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+            // Header with title and status
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    caseItem['title'],
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: kPrimaryBlue,
-                  borderRadius: BorderRadius.circular(48),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: statusBackgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    caseItem['status'],
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-                child: const Icon(Icons.chevron_right, size: 24, color: Colors.white),
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 8),
 
-        ],
+            // Client info
+            Text(
+              'Client: ${caseItem['client']} · ${caseItem['type']}',
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.black54,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: kPrimaryBlue.withOpacity(isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        caseItem['hearing'],
+                        style: TextStyle(
+                          color: isDark ? Colors.blue[200] : kPrimaryBlue,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // This icon is purely decorative now since the whole card is tappable
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: kPrimaryBlue,
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                  child: const Icon(Icons.chevron_right, size: 24, color: Colors.white),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
-
 
   @override
   void dispose() {
@@ -336,10 +399,10 @@ class _CasesScreenState extends State<CasesScreen> {
     super.dispose();
   }
 
-  void _showFilterDialog(BuildContext context) {
+  void _showFilterDialog(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -355,15 +418,19 @@ class _CasesScreenState extends State<CasesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Filter Cases',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(
+                          Icons.close,
+                          color: isDark ? Colors.grey[400] : Colors.black54,
+                        ),
                         onPressed: () => Navigator.pop(context),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -371,11 +438,12 @@ class _CasesScreenState extends State<CasesScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Status',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.grey[300] : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -383,18 +451,19 @@ class _CasesScreenState extends State<CasesScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      _filterChipModal('All', setModalState),
-                      _filterChipModal('Active', setModalState),
-                      _filterChipModal('Pending', setModalState),
-                      _filterChipModal('Closed', setModalState),
+                      _filterChipModal('All', setModalState, isDark),
+                      _filterChipModal('Active', setModalState, isDark),
+                      _filterChipModal('Pending', setModalState, isDark),
+                      _filterChipModal('Closed', setModalState, isDark),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     'Case Type',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.grey[300] : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -402,10 +471,10 @@ class _CasesScreenState extends State<CasesScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      _filterChipModal('Contract', setModalState),
-                      _filterChipModal('Property', setModalState),
-                      _filterChipModal('Family', setModalState),
-                      _filterChipModal('Criminal', setModalState),
+                      _filterChipModal('Contract', setModalState, isDark),
+                      _filterChipModal('Property', setModalState, isDark),
+                      _filterChipModal('Family', setModalState, isDark),
+                      _filterChipModal('Criminal', setModalState, isDark),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -418,16 +487,16 @@ class _CasesScreenState extends State<CasesScreen> {
                             Navigator.pop(context);
                           },
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFF2D4ED8)),
+                            side: BorderSide(color: kPrimaryBlue),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Reset',
                             style: TextStyle(
-                              color: Color(0xFF2D4ED8),
+                              color: kPrimaryBlue,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -440,7 +509,7 @@ class _CasesScreenState extends State<CasesScreen> {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2D4ED8),
+                            backgroundColor: kPrimaryBlue,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -466,17 +535,13 @@ class _CasesScreenState extends State<CasesScreen> {
     );
   }
 
-  // Helper method for filter chips in the modal
-  Widget _filterChipModal(String label, StateSetter setModalState) {
-    // This logic might need to be adjusted based on how you want to handle filter selections
-    // For now, it uses the same _selectedFilter variable
+  Widget _filterChipModal(String label, StateSetter setModalState, bool isDark) {
     final selected = _selectedFilter == label;
     return InkWell(
       onTap: () {
         setModalState(() {
           _selectedFilter = label;
         });
-        // Also update the main screen's state
         setState(() {
           _selectedFilter = label;
         });
@@ -484,13 +549,17 @@ class _CasesScreenState extends State<CasesScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF2D4ED8) : const Color(0xFFF3F4F6),
+          color: selected
+              ? kPrimaryBlue
+              : (isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : Colors.black87,
+            color: selected
+                ? Colors.white
+                : (isDark ? Colors.grey[300] : Colors.black87),
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
             fontSize: 13,
           ),
