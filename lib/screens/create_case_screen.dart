@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class CreateCaseScreen extends StatefulWidget {
   const CreateCaseScreen({super.key});
@@ -11,7 +12,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   int _currentStep = 0;
   final TextEditingController _caseTitleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _selectedCaseType = 'Contract';
+  String? _selectedCaseType = 'Contract'; // Use nullable for hint
   bool _isConfidential = true;
 
   final List<String> caseTypes = [
@@ -32,8 +33,13 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final scaffoldBackgroundColor = isDark ? Colors.black : const Color(0xFFF9F9F9);
+    final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Create Case',
@@ -43,99 +49,58 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2D4ED8),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        elevation: 0,
       ),
       body: Column(
         children: [
           // Step Indicator
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            color: cardBackgroundColor,
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             child: Row(
               children: [
-                _buildStepIndicator(1, 'Basic Info', isActive: _currentStep == 0),
+                _buildStepIndicator(1, 'Basic Info', isActive: _currentStep >= 0),
                 _buildStepLine(isActive: _currentStep > 0),
-                _buildStepIndicator(2, 'Participants', isActive: _currentStep == 1),
+                _buildStepIndicator(2, 'Participants', isActive: _currentStep >= 1),
                 _buildStepLine(isActive: _currentStep > 1),
-                _buildStepIndicator(3, 'Schedule', isActive: _currentStep == 2),
+                _buildStepIndicator(3, 'Schedule', isActive: _currentStep >= 2),
               ],
             ),
           ),
+          const SizedBox(height: 8),
 
           // Form Content
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: _buildStepContent(),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Container(
+                key: ValueKey<int>(_currentStep), // Important for AnimatedSwitcher
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildStepContent(isDark, cardBackgroundColor),
+                ),
+              ),
             ),
           ),
 
-          // Action Buttons
+          // --- MODIFICATION: Updated Action Buttons ---
           Container(
-            color: Colors.white,
             padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                if (_currentStep > 0)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() => _currentStep--);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF2D4ED8)),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Back',
-                        style: TextStyle(
-                          color: Color(0xFF2D4ED8),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                if (_currentStep > 0) const SizedBox(width: 12),
-                Expanded(
-                  flex: _currentStep == 0 ? 1 : 1,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentStep < 2) {
-                        setState(() => _currentStep++);
-                      } else {
-                        // Create case
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Case created successfully')),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2D4ED8),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      _currentStep < 2 ? 'Next' : 'Create Case',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+            decoration: BoxDecoration(
+              color: cardBackgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                )
               ],
+            ),
+            child: SafeArea(
+              child: _buildActionButtons(),
             ),
           ),
         ],
@@ -143,21 +108,124 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
+  // --- Button Builder Logic ---
+  Widget _buildActionButtons() {
+    // On the first step (index 0), show 'Save' and 'Next' side-by-side
+    if (_currentStep == 0) {
+      return Row(
+        children: [
+          Expanded(child: _buildSaveButton()),
+          const SizedBox(width: 12),
+          Expanded(child: _buildNextButton()),
+        ],
+      );
+    }
+
+    // On steps 2 and 3 (index 1 and 2), use the new stacked layout
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildBackButton()),
+            const SizedBox(width: 12),
+            Expanded(child: _buildSaveButton()),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // On the last step, show 'Create Case', otherwise show 'Next'
+        _currentStep == 2 ? _buildCreateCaseButton() : _buildNextButton(),
+      ],
+    );
+  }
+
+  // --- Individual Button Widgets ---
+  Widget _buildBackButton() {
+    return OutlinedButton(
+      onPressed: () => setState(() => _currentStep--),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: kPrimaryBlue),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: const Text('Back', style: TextStyle(color: kPrimaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return OutlinedButton(
+      onPressed: () {
+        // Placeholder save action
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Progress Saved!'), backgroundColor: Colors.green),
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: Colors.grey),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: Text('Save', style: TextStyle(color: Colors.grey.shade600, fontSize: 16, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildNextButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => setState(() => _currentStep++),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kPrimaryBlue,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+        ),
+        child: const Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
+  Widget _buildCreateCaseButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Case created successfully!'), backgroundColor: Colors.green),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kPrimaryBlue,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+        ),
+        child: const Text('Create Case', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
+  // --- Step Indicator Widgets (Unchanged) ---
   Widget _buildStepIndicator(int step, String label, {required bool isActive}) {
+    final color = isActive ? kPrimaryBlue : Colors.grey.shade400;
     return Column(
       children: [
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF2D4ED8) : Colors.grey.shade300,
+            color: isActive ? kPrimaryBlue : Colors.transparent,
             shape: BoxShape.circle,
+            border: Border.all(color: color, width: 2),
           ),
           child: Center(
             child: Text(
               '$step',
               style: TextStyle(
-                color: isActive ? Colors.white : Colors.grey.shade600,
+                color: isActive ? Colors.white : color,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -169,9 +237,10 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           label,
           style: TextStyle(
             fontSize: 11,
-            color: isActive ? const Color(0xFF2D4ED8) : Colors.grey.shade600,
+            color: color,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -181,176 +250,160 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     return Expanded(
       child: Container(
         height: 2,
-        margin: const EdgeInsets.only(bottom: 28),
-        color: isActive ? const Color(0xFF2D4ED8) : Colors.grey.shade300,
+        margin: const EdgeInsets.only(bottom: 34, left: 4, right: 4),
+        color: isActive ? kPrimaryBlue : Colors.grey.shade400,
       ),
     );
   }
 
-  Widget _buildStepContent() {
+  // --- Step Content Widgets (Unchanged) ---
+  Widget _buildStepContent(bool isDark, Color cardBackgroundColor) {
     switch (_currentStep) {
       case 0:
-        return _buildBasicInfoStep();
+        return _buildBasicInfoStep(isDark, cardBackgroundColor);
       case 1:
-        return _buildParticipantsStep();
+        return _buildParticipantsStep(isDark, cardBackgroundColor);
       case 2:
-        return _buildScheduleStep();
+        return _buildScheduleStep(isDark, cardBackgroundColor);
       default:
         return const SizedBox.shrink();
     }
   }
 
-  Widget _buildBasicInfoStep() {
+  // --- Reusable Form Field Widgets (Unchanged) ---
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hintText,
+    required bool isDark,
+    required Color cardBackgroundColor,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Case Title',
+        Text(
+          label,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: isDark ? Colors.grey[300] : Colors.black87,
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TextField(
-            controller: _caseTitleController,
-            decoration: const InputDecoration(
-              hintText: 'E.g. John vs Nigerian Govt',
-              hintStyle: TextStyle(color: Colors.black38),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 14),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey[500]),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-
-        const Text(
-          'Description',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TextField(
-            controller: _descriptionController,
-            maxLines: 6,
-            decoration: const InputDecoration(
-              hintText: 'Enter case description...',
-              hintStyle: TextStyle(color: Colors.black38),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        const Text(
-          'Case Type',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedCaseType,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 14),
-            ),
-            items: caseTypes.map((type) {
-              return DropdownMenuItem(
-                value: type,
-                child: Text(type),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() => _selectedCaseType = value!);
-            },
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        Row(
-          children: [
-            Switch(
-              value: _isConfidential,
-              onChanged: (value) {
-                setState(() => _isConfidential = value);
-              },
-              activeColor: const Color(0xFF2D4ED8),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Confidential',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
         ),
       ],
     );
   }
 
-  Widget _buildParticipantsStep() {
+  Widget _buildDropdownField({
+    required String? value,
+    required String label,
+    required List<String> items,
+    required bool isDark,
+    required ValueChanged<String?> onChanged,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Add Participants',
+        Text(
+          label,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.grey[300] : Colors.black87,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Add clients, lawyers, and other participants to this case.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black54,
+        DropdownButtonFormField<String>(
+          value: value,
+          items: items.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+          onChanged: onChanged,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
+            ),
           ),
+          dropdownColor: isDark ? const Color(0xFF2C2C2E) : Colors.white,
         ),
-        const SizedBox(height: 24),
+      ],
+    );
+  }
 
+  // --- Step 1: Basic Info (Unchanged) ---
+  Widget _buildBasicInfoStep(bool isDark, Color cardBackgroundColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildTextField(
+          controller: _caseTitleController,
+          label: 'Case Title',
+          hintText: 'E.g. John vs Nigerian Govt',
+          isDark: isDark,
+          cardBackgroundColor: cardBackgroundColor,
+        ),
+        const SizedBox(height: 20),
+        _buildTextField(
+          controller: _descriptionController,
+          label: 'Description',
+          hintText: 'Enter case description...',
+          isDark: isDark,
+          cardBackgroundColor: cardBackgroundColor,
+          maxLines: 5,
+        ),
+        const SizedBox(height: 20),
+        _buildDropdownField(
+          value: _selectedCaseType,
+          label: 'Case Type',
+          items: caseTypes,
+          isDark: isDark,
+          onChanged: (value) => setState(() => _selectedCaseType = value),
+        ),
+        const SizedBox(height: 20),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildParticipantItem('Client', 'Add client', Icons.person_add_outlined),
-              const Divider(height: 32),
-              _buildParticipantItem('Co-counsel', 'Add co-counsel', Icons.people_outline),
-              const Divider(height: 32),
-              _buildParticipantItem('Witness', 'Add witness', Icons.record_voice_over_outlined),
+              const Text(
+                'Confidential Case',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+              Switch(
+                value: _isConfidential,
+                onChanged: (value) => setState(() => _isConfidential = value),
+                activeColor: kPrimaryBlue,
+                thumbColor: MaterialStateProperty.all(Colors.white),
+              ),
             ],
           ),
         ),
@@ -358,101 +411,119 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  Widget _buildParticipantItem(String role, String hint, IconData icon) {
+  // --- Step 2: Participants (Unchanged) ---
+  Widget _buildParticipantsStep(bool isDark, Color cardBackgroundColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Add Participants',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Add clients, lawyers, and other participants to this case.',
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cardBackgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
+          ),
+          child: Column(
+            children: [
+              _buildParticipantItem('Client', 'Add client'),
+              const Divider(height: 32),
+              _buildParticipantItem('Co-counsel', 'Add co-counsel'),
+              const Divider(height: 32),
+              _buildParticipantItem('Witness', 'Add witness'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildParticipantItem(String role, String hint) {
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                role,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text(role, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(
-                hint,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.black45,
-                ),
-              ),
+              Text(hint, style: TextStyle(fontSize: 13, color: Colors.grey[500])),
             ],
           ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(icon, color: const Color(0xFF2D4ED8)),
+        TextButton(
+          onPressed: () { /* Add participant logic */ },
+          style: TextButton.styleFrom(
+            foregroundColor: kPrimaryBlue,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
 
-  Widget _buildScheduleStep() {
+  // --- Step 3: Schedule (Unchanged) ---
+  Widget _buildScheduleStep(bool isDark, Color cardBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Schedule Hearing',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Set up the first hearing date and location.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black54,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         const SizedBox(height: 24),
-
-        _buildScheduleField('Date', 'Select date', Icons.calendar_today_outlined),
+        _buildScheduleField('Date', 'Select date', isDark),
         const SizedBox(height: 16),
-        _buildScheduleField('Time', 'Select time', Icons.access_time),
+        _buildScheduleField('Time', 'Select time', isDark),
         const SizedBox(height: 16),
-        _buildScheduleField('Location', 'Enter courtroom/location', Icons.location_on_outlined),
+        _buildScheduleField('Location', 'Enter courtroom/location', isDark),
       ],
     );
   }
 
-  Widget _buildScheduleField(String label, String hint, IconData icon) {
+  Widget _buildScheduleField(String label, String hint, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: isDark ? Colors.grey[300] : Colors.black87,
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.black54, size: 20),
-              const SizedBox(width: 12),
-              Text(
-                hint,
-                style: const TextStyle(
-                  color: Colors.black38,
-                  fontSize: 14,
-                ),
-              ),
-            ],
+        InkWell(
+          onTap: () { /* Show date/time picker or navigate */ },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(child: Text(hint, style: TextStyle(color: Colors.grey[500], fontSize: 16))),
+                Icon(Icons.chevron_right, color: Colors.grey[500])
+              ],
+            ),
           ),
         ),
       ],

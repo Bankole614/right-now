@@ -106,7 +106,7 @@ class _CasesScreenState extends State<CasesScreen> {
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
+                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade400,
                                   width: 1.0,
                                 ),
                               ),
@@ -148,7 +148,7 @@ class _CasesScreenState extends State<CasesScreen> {
                               : const Color(0xFFF3F4F6),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
+                            color: isDark ? Colors.grey[700]! : Colors.grey.shade400,
                           ),
                         ),
                         child: Icon(
@@ -227,7 +227,6 @@ class _CasesScreenState extends State<CasesScreen> {
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
@@ -244,7 +243,7 @@ class _CasesScreenState extends State<CasesScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? Colors.grey[400] : Colors.black54,
+                color: isDark ? Colors.grey[400] : Color(0xFF343434),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
