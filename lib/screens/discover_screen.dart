@@ -43,31 +43,51 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Search bar
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.black38, size: 22),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search by name, specialization, or location',
-                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+            // MODIFIED: Search bar with absolute positioned icon and border
+            Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by name, specialization, or location',
+                    hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+                    filled: true,
+                    fillColor: const Color(0xFFF3F4F6),
+                    contentPadding: const EdgeInsets.only(
+                      left: 48, // Space for the icon
+                      right: 16,
+                      top: 14,
+                      bottom: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300, // Border color
+                        width: 1.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300, // Border color
+                        width: 1.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF2D4ED8), // Border color on focus
+                        width: 1.5,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: Icon(Icons.search, color: Colors.black38, size: 22),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
 

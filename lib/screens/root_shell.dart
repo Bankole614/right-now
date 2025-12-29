@@ -29,22 +29,102 @@ class _RootShellState extends State<RootShell> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      // REMOVE SafeArea from here
       body: IndexedStack(index: _selectedIndex, children: _pages),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: kPrimaryBlue,
-        unselectedItemColor: Colors.black54,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'Cases'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Discover'),
-          BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: 'AI'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            top: BorderSide(
+              color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+              width: 0.5,
+            ),
+          ),
+          boxShadow: [
+            if (isDark)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: theme.colorScheme.surface,
+          selectedItemColor: kPrimaryBlue,
+          unselectedItemColor: isDark ? Colors.grey[400] : Colors.grey[600],
+          selectedLabelStyle: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: kPrimaryBlue,
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+          ),
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          elevation: 0,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home_outlined,
+                color: _selectedIndex == 0
+                    ? kPrimaryBlue
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              activeIcon: const Icon(Icons.home, color: kPrimaryBlue),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.gavel,
+                color: _selectedIndex == 1
+                    ? kPrimaryBlue
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              activeIcon: const Icon(Icons.gavel, color: kPrimaryBlue),
+              label: 'Cases',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+                color: _selectedIndex == 2
+                    ? kPrimaryBlue
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              activeIcon: const Icon(Icons.search, color: kPrimaryBlue),
+              label: 'Discover',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.smart_toy_outlined,
+                color: _selectedIndex == 3
+                    ? kPrimaryBlue
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              activeIcon: const Icon(Icons.smart_toy, color: kPrimaryBlue),
+              label: 'AI',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_outline,
+                color: _selectedIndex == 4
+                    ? kPrimaryBlue
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              activeIcon: const Icon(Icons.person, color: kPrimaryBlue),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
