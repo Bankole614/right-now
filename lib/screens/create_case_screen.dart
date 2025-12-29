@@ -35,11 +35,9 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final scaffoldBackgroundColor = isDark ? Colors.black : const Color(0xFFF9F9F9);
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Create Case',
@@ -144,11 +142,11 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     return OutlinedButton(
       onPressed: () => setState(() => _currentStep--),
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: kPrimaryBlue),
+        side: const BorderSide(color: Colors.grey),
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: const Text('Back', style: TextStyle(color: kPrimaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text('Back', style: TextStyle(color: Colors.grey.shade600, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -161,11 +159,11 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         );
       },
       style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: Colors.grey),
+        side: BorderSide(color: kPrimaryBlue),
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Text('Save', style: TextStyle(color: Colors.grey.shade600, fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text('Save', style: TextStyle(color: kPrimaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -208,9 +206,8 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  // --- Step Indicator Widgets (Unchanged) ---
   Widget _buildStepIndicator(int step, String label, {required bool isActive}) {
-    final color = isActive ? kPrimaryBlue : Colors.grey.shade400;
+    final color = isActive ? kPrimaryBlue : Color(0xFFB6B6B6);
     return Column(
       children: [
         Container(
@@ -236,9 +233,9 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 12,
+            color: isActive ? kPrimaryBlue : Color(0xFF262626),
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -251,7 +248,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
       child: Container(
         height: 2,
         margin: const EdgeInsets.only(bottom: 34, left: 4, right: 4),
-        color: isActive ? kPrimaryBlue : Colors.grey.shade400,
+        color: isActive ? kPrimaryBlue : Color(0xFFB6B6B6),
       ),
     );
   }
@@ -305,6 +302,13 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? Colors.grey[700]! : Colors.grey.shade500,
+                width: 1.0,
+              ),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
@@ -344,6 +348,13 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
             fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? Colors.grey[700]! : Colors.grey.shade500,
+                width: 1.0,
+              ),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
