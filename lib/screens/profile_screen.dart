@@ -158,50 +158,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  // Future<void> _confirmAndLogout() async {
-  //   if (_loggingOut) return;
-  //   final confirm = await showDialog<bool>(
-  //     context: context,
-  //     builder: (ctx) => AlertDialog(
-  //       title: const Text('Log out'),
-  //       content: const Text('Are you sure you want to log out?'),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.of(ctx).pop(false),
-  //           child: const Text('Cancel'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () => Navigator.of(ctx).pop(true),
-  //           child: const Text('Log out'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  //   if (confirm != true) return;
-  //
-  //   setState(() => _loggingOut = true);
-  //   try {
-  //     // call your auth store logout, but do not navigate from the store
-  //     await ref
-  //         .read(authNotifierProvider.notifier)
-  //         .logout(navigateToLogin: false);
-  //
-  //     // IMPORTANT: use rootNavigator so we replace the entire app stack (MaterialApp navigator)
-  //     if (!mounted) return;
-  //     Navigator.of(
-  //       context,
-  //       rootNavigator: true,
-  //     ).pushNamedAndRemoveUntil('/login', (r) => false);
-  //   } catch (e) {
-  //     if (!mounted) return;
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to log out: ${e.toString()}')),
-  //     );
-  //   } finally {
-  //     if (mounted) setState(() => _loggingOut = false);
-  //   }
-  // }
+  Future<void> _confirmAndLogout() async {
+    if (_loggingOut) return;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Log out'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Log out'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+    try {
+
+      // IMPORTANT: use rootNavigator so we replace the entire app stack (MaterialApp navigator)
+      if (!mounted) return;
+      Navigator.of(
+        context,
+        rootNavigator: true,
+      ).pushNamedAndRemoveUntil('/login', (r) => false);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to log out: ${e.toString()}')),
+      );
+    }
+  }
 
   /// Opens the delete-account bottom sheet and, if user confirms,
   /// calls logout/cleanup and navigates to login.
@@ -245,66 +237,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // read auth state
-    // final authState = ref.watch(authNotifierProvider);
-    // final Map<String, dynamic>? user = authState.user;
-    //
-    // // derive display name and email safely
-    // String displayName = 'Jane Cooper';
-    // String displayEmail = 'janecooper@example.com';
-    // String avatarLetter = 'J';
-    //
-    // if (user != null && user.isNotEmpty) {
-    //   // Prefer first_name/last_name, fall back to name
-    //   final first = (user['first_name'] ?? user['firstName'] ?? '') as String;
-    //   final last = (user['last_name'] ?? user['lastName'] ?? '') as String;
-    //   final name = (user['name'] ?? '') as String;
-    //   final email =
-    //   (user['email'] ?? user['email_address'] ?? user['emailAddress'])
-    //   as String?;
-    //
-    //   if (first.isNotEmpty) {
-    //     displayName = (last.isNotEmpty) ? '$first $last' : first;
-    //     avatarLetter = first.trim().isNotEmpty
-    //         ? first.trim()[0].toUpperCase()
-    //         : displayName[0];
-    //   } else if (name.isNotEmpty) {
-    //     displayName = name;
-    //     avatarLetter = name.trim().isNotEmpty
-    //         ? name.trim()[0].toUpperCase()
-    //         : 'J';
-    //   }
-    //
-    //   if (email != null && email.isNotEmpty) displayEmail = email;
-    // }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: Column(
           children: [
-            // AppBar with gradient background
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [kGradientStart, kGradientEnd],
-                ),
-              ),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                title: const Text(
-                  'Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                centerTitle: true,
-              ),
-            ),
 
             // Menu items section
             Expanded(
@@ -456,7 +404,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     _tile(
                       icon: Icons.logout_outlined,
                       label: _loggingOut ? 'Logging out...' : 'Log Out',
-                      onTap: () {},
+                      onTap: () {
+                        _confirmAndLogout();
+                      },
                     ),
                     const SizedBox(height: 20),
 

@@ -74,7 +74,7 @@ ThemeData _lightTheme() {
     scaffoldBackgroundColor: Color(0xFFF2F2F2),
     primaryColor: kPrimaryBlue,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
+      backgroundColor: kPrimaryBlue,
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
