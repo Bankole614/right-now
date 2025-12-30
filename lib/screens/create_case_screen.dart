@@ -515,7 +515,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  // --- MODIFICATION: Updated Step 3 Widgets ---
   Widget _buildScheduleStep(bool isDark, Color cardBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -532,14 +531,12 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         const SizedBox(height: 24),
         _buildScheduleField(
           label: 'Date',
-          // Display the selected date or the hint text
           hint: _selectedDate == null
               ? 'Select date'
               : "${_selectedDate!.toLocal()}".split(' ')[0],
           isDark: isDark,
           icon: Icons.calendar_today_outlined,
           onTap: () async {
-            // Show date picker and update state
             final DateTime? picked = await showDatePicker(
               context: context,
               initialDate: _selectedDate ?? DateTime.now(),

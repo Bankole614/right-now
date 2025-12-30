@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:right_now/screens/documents_screen.dart';
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class CaseDetailsScreen extends StatelessWidget {
   const CaseDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.grey[400]! : Color(0xFF4D4D4D);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
       appBar: AppBar(
         title: const Text(
           'Details',
@@ -17,9 +23,8 @@ class CaseDetailsScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2D4ED8),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.chevron_left, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -38,21 +43,27 @@ class CaseDetailsScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Case Title Card
             Container(
-              color: Colors.white,
+              margin: const EdgeInsets.symmetric(horizontal: 16.0),
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cardBackgroundColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'John vs Nigerian Govt.',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -61,42 +72,39 @@ class CaseDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
                               'Client',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: subTextColor, fontSize: 12),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'John Doe',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
+                                color: textColor,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
                               'Lawyer',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: subTextColor, fontSize: 12),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'Mark Cole',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
+                                color: textColor,
                               ),
                             ),
                           ],
@@ -104,144 +112,192 @@ class CaseDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Next Hearing: Nov 20 · Courtroom B',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
-                    ),
-                  ),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2D4ED8).withOpacity(0.1),
+                      color: kPrimaryBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text(
                       'Lagos, NG',
                       style: TextStyle(
-                        color: Color(0xFF2D4ED8),
+                        color: kPrimaryBlue,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          'Next Hearing: Nov 20 · Courtroom B',
+                          style: TextStyle(
+                            color: subTextColor,
+                            fontSize: 13,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: 0.6,
+                            backgroundColor: isDark ? Colors.grey[800] : Colors.grey.shade200,
+                            valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
+                            minHeight: 6,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
 
-            // Quick Actions
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
+            const SizedBox(height: 16),
+
+            // Quick Actions Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildQuickAction(
-                    Icons.psychology_outlined,
-                    'AI\nAssistant',
-                        () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening AI Assistant...')),
-                      );
-                    },
+                  Expanded(
+                    child: _buildQuickAction(
+                      icon: Icons.psychology_outlined,
+                      label: 'AI\nAssistant',
+                      cardBackgroundColor: cardBackgroundColor,
+                      textColor: textColor,
+                      onTap: () {},
+                    ),
                   ),
-                  _buildQuickAction(
-                    Icons.upload_file_outlined,
-                    'Upload\nDocument',
-                        () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const DocumentsScreen()),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening Documents...')),
-                      );
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildQuickAction(
+                      icon: Icons.upload_file_outlined,
+                      label: 'Upload\nDocument',
+                      cardBackgroundColor: cardBackgroundColor,
+                      textColor: textColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const DocumentsScreen()),
+                        );
+                      },
+                    ),
                   ),
-                  _buildQuickAction(
-                    Icons.chat_outlined,
-                    'Open\nChat',
-                        () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening Chat...')),
-                      );
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildQuickAction(
+                      icon: Icons.chat_outlined,
+                      label: 'Open\nChat',
+                      cardBackgroundColor: cardBackgroundColor,
+                      textColor: textColor,
+                      onTap: () {},
+                    ),
                   ),
-                  _buildQuickAction(
-                    Icons.task_outlined,
-                    'Create\nTask',
-                        () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Creating Task...')),
-                      );
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildQuickAction(
+                      icon: Icons.task_outlined,
+                      label: 'Create\nTask',
+                      cardBackgroundColor: cardBackgroundColor,
+                      textColor: textColor,
+                      onTap: () {},
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
 
-            // Timeline Section
+            const SizedBox(height: 16),
+
+            // Timeline Card
             Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: cardBackgroundColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Timeline',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      'Timeline',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 16),
                   _buildTimelineItem(
                     icon: Icons.chat_bubble_outline,
                     title: 'Please, upload the signed contract',
                     date: 'Nov 12',
+                    textColor: textColor,
+                    subTextColor: subTextColor,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFFD8D8D8)),
                   _buildTimelineItem(
                     icon: Icons.description_outlined,
                     title: 'Contract.pdf',
                     date: 'Nov 12',
+                    textColor: textColor,
+                    subTextColor: subTextColor,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFFD8D8D8)),
                   _buildTimelineItem(
                     icon: Icons.add_circle_outline,
                     title: 'Hearing Added',
                     subtitle: 'Nov 20 · Courtroom B',
                     date: 'Nov 12',
+                    textColor: textColor,
+                    subTextColor: subTextColor,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFFD8D8D8)),
                   _buildTimelineItem(
                     icon: Icons.task_alt_outlined,
                     title: 'Task Created',
                     subtitle: 'Draft initial demand',
                     date: 'Nov 12',
+                    textColor: textColor,
+                    subTextColor: subTextColor,
+                    isLast: true,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
 
-            // Documents Section
+            // --- SECTION RESTORED ---
+            // Documents Card
             Container(
-              color: Colors.white,
+              margin: const EdgeInsets.symmetric(horizontal: 16.0),
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cardBackgroundColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Documents',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -255,30 +311,38 @@ class CaseDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 16), // Bottom spacing
           ],
         ),
       ),
     );
   }
 
-  Widget _buildQuickAction(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildQuickAction({
+    required IconData icon,
+    required String label,
+    required Color cardBackgroundColor,
+    required Color textColor,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: cardBackgroundColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: const Color(0xFF2D4ED8)),
+            Icon(icon, size: 28, color: kPrimaryBlue),
             const SizedBox(height: 8),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.black87,
-              ),
+              style: TextStyle(fontSize: 11, color: textColor),
             ),
           ],
         ),
@@ -291,60 +355,68 @@ class CaseDetailsScreen extends StatelessWidget {
     required String title,
     String? subtitle,
     required String date,
+    required Color textColor,
+    required Color subTextColor,
+    bool isLast = false,
   }) {
-    return Row(
-      children: [
-        Icon(icon, size: 22, color: Colors.black54),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 2),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 12.0,
+        bottom: isLast ? 16.0 : 12.0,
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 22, color: kPrimaryBlue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
                   ),
                 ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 12, color: subTextColor),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-        Text(
-          date,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.black45,
+          Text(
+            date,
+            style: TextStyle(
+              fontSize: 12,
+              color: subTextColor.withOpacity(0.7),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
+  // This widget was missing from the body but is needed
   Widget _buildDocumentCard(String title) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF2D4ED8).withOpacity(0.05),
+          color: kPrimaryBlue.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF2D4ED8).withOpacity(0.2)),
+          border: Border.all(color: kPrimaryBlue.withOpacity(0.2)),
         ),
         child: Row(
           children: [
             const Icon(
               Icons.description_outlined,
-              color: Color(0xFF2D4ED8),
+              color: kPrimaryBlue,
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -354,7 +426,7 @@ class CaseDetailsScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF2D4ED8),
+                  color: kPrimaryBlue,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
