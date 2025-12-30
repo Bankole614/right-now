@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:right_now/screens/upload_document_screen.dart';
+import 'package:right_now/utils/constants.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -30,6 +31,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
       appBar: AppBar(
@@ -52,38 +59,42 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         children: [
           // Search Bar
           Container(
-            color: Colors.white,
             padding: const EdgeInsets.all(16),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F6),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.black38, size: 22),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search Documents',
-                        hintStyle: TextStyle(color: Colors.black38),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
-                  ),
-                ],
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(color: textColor),
+              decoration: InputDecoration(
+                hintText: 'Search Documents',
+                hintStyle: TextStyle(color: subTextColor),
+                // Use prefixIcon for better alignment
+                prefixIcon: Icon(Icons.search, color: subTextColor, size: 22),
+                filled: true,
+                // Use a fill color that adapts to the theme
+                fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                // Remove the underline border and use a rounded rectangle border
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                // Add a border for when the field is focused
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
+                ),
               ),
             ),
           ),
+          const SizedBox(height: 16),
 
           // Header Section
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -111,20 +122,17 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
           // Documents List
           Expanded(
-            child: Container(
-              color: Colors.white,
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: documents.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final doc = documents[index];
-                  return _buildDocumentItem(
-                    doc['title'],
-                    doc['date'],
-                  );
-                },
-              ),
+            child: ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: documents.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final doc = documents[index];
+                return _buildDocumentItem(
+                  doc['title'],
+                  doc['date'],
+                );
+              },
             ),
           ),
         ],
@@ -146,7 +154,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
