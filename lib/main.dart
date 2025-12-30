@@ -73,6 +73,9 @@ ThemeData _lightTheme() {
     fontFamily: GoogleFonts.inter().fontFamily,
     scaffoldBackgroundColor: Color(0xFFF2F2F2),
     primaryColor: kPrimaryBlue,
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) => const Icon(Icons.chevron_left), // Your chosen arrow type
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: kPrimaryBlue,
       elevation: 0,

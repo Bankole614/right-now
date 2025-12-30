@@ -88,10 +88,6 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         centerTitle: true,
         backgroundColor: kPrimaryBlue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: Column(
         children: [
@@ -201,6 +197,9 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Flexible(
             child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: bubbleColor,
@@ -211,38 +210,37 @@ class _ChatScreenState extends State<ChatScreen> {
                   bottomRight: Radius.circular(isSent ? 4 : 20),
                 ),
               ),
-              child: Column(
-                // --- THIS IS THE FIX ---
-                // Keep the default CrossAxisAlignment.start and let the Column shrink-wrap.
-                // We no longer need to force the alignment here.
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // The message text
-                  Text(
-                    text,
-                    style: TextStyle(color: bubbleTextColor, fontSize: 14, height: 1.3),
-                  ),
-                  const SizedBox(height: 4),
-                  // This Row will now be pushed to the bottom-right of the Column
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        time,
-                        style: TextStyle(fontSize: 11, color: timeTextColor),
-                      ),
-                      // Read receipt only for sent messages
-                      if (isSent) ...[
-                        const SizedBox(width: 4),
-                        Icon(
-                          isRead ? Icons.done_all : Icons.done,
-                          size: 16,
-                          color: timeTextColor,
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // The message text
+                    Text(
+                      text,
+                      style: TextStyle(color: bubbleTextColor, fontSize: 14, height: 1.3),
+                    ),
+                    const SizedBox(height: 4),
+                    // Right-aligned timestamp and checkmark
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          time,
+                          style: TextStyle(fontSize: 11, color: timeTextColor),
                         ),
+                        // Read receipt only for sent messages
+                        if (isSent) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            isRead ? Icons.done_all : Icons.done,
+                            size: 16,
+                            color: timeTextColor,
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
