@@ -36,9 +36,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black87;
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Documents',
@@ -48,7 +49,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2D4ED8),
+        backgroundColor: kPrimaryBlue,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -66,21 +67,30 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               decoration: InputDecoration(
                 hintText: 'Search Documents',
                 hintStyle: TextStyle(color: subTextColor),
-                // Use prefixIcon for better alignment
                 prefixIcon: Icon(Icons.search, color: subTextColor, size: 22),
                 filled: true,
-                // Use a fill color that adapts to the theme
-                fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+                fillColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF3F4F6),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                // Remove the underline border and use a rounded rectangle border
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                    width: 1,
+                  ),
                 ),
-                // Add a border for when the field is focused
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                    width: 1,
+                  ),
+                ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
+                  borderSide: BorderSide(
+                    color: kPrimaryBlue,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -90,27 +100,35 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           // Header Section
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cardBackgroundColor,
               borderRadius: BorderRadius.circular(12),
+              boxShadow: isDark ? null : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Case Documents',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'These are files uploaded by you and your Lawyer and they are securely stored.',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black54,
+                    color: subTextColor,
                     height: 1.4,
                   ),
                 ),
@@ -131,6 +149,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 return _buildDocumentItem(
                   doc['title'],
                   doc['date'],
+                  isDark: isDark,
+                  cardBackgroundColor: cardBackgroundColor,
+                  textColor: textColor,
+                  subTextColor: subTextColor,
                 );
               },
             ),
@@ -144,25 +166,39 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             MaterialPageRoute(builder: (_) => const UploadDocumentScreen()),
           );
         },
-        backgroundColor: const Color(0xFF2D4ED8),
+        backgroundColor: kPrimaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildDocumentItem(String title, String date) {
+  Widget _buildDocumentItem(
+      String title,
+      String date, {
+        required bool isDark,
+        required Color cardBackgroundColor,
+        required Color textColor,
+        required Color subTextColor,
+      }) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBackgroundColor,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark ? null : [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF2D4ED8),
+              color: kPrimaryBlue,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -178,44 +214,80 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   date,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black54,
+                    color: subTextColor,
                   ),
                 ),
               ],
             ),
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.black54),
+            icon: Icon(Icons.more_vert, color: subTextColor),
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            surfaceTintColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
             onSelected: (value) {
               // Handle menu actions
               if (value == 'view') {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Opening document...')),
+                  SnackBar(
+                    content: const Text('Opening document...'),
+                    backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  ),
                 );
               } else if (value == 'send') {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Sending to AI...')),
+                  SnackBar(
+                    content: const Text('Sending to AI...'),
+                    backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  ),
                 );
               } else if (value == 'download') {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Downloading...')),
+                  SnackBar(
+                    content: const Text('Downloading...'),
+                    backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  ),
                 );
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'view', child: Text('View')),
-              const PopupMenuItem(value: 'send', child: Text('Send to AI')),
-              const PopupMenuItem(value: 'download', child: Text('Download')),
+              PopupMenuItem(
+                value: 'view',
+                child: Text(
+                  'View',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'send',
+                child: Text(
+                  'Send to AI',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'download',
+                child: Text(
+                  'Download',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
             ],
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/chat_screen.dart';
 import 'package:right_now/screens/documents_screen.dart';
 import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
@@ -200,7 +201,12 @@ class CaseDetailsScreen extends StatelessWidget {
                       label: 'Open\nChat',
                       cardBackgroundColor: cardBackgroundColor,
                       textColor: textColor,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ChatScreen()),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),

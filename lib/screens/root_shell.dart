@@ -21,7 +21,7 @@ class _RootShellState extends State<RootShell> {
     HomeScreen(),
     CasesScreen(),
     DiscoverScreen(),
-    AIScreen(),
+    AIChatScreen(),
     ProfileScreen(),
   ];
 

@@ -58,7 +58,7 @@ class RightNow extends ConsumerWidget {
         '/home': (_) => const RootShell(),
         '/discover': (_) => const DiscoverScreen(),
         '/cases': (_) => const CasesScreen(),
-        '/ai': (_) => const AIScreen(),
+        '/ai': (_) => const AIChatScreen(),
         '/profile': (_) => const ProfileScreen(),
       },
     );
