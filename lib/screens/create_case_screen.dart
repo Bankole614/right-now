@@ -12,8 +12,14 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   int _currentStep = 0;
   final TextEditingController _caseTitleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController(); // Controller for location
+
   String? _selectedCaseType = 'Contract'; // Use nullable for hint
   bool _isConfidential = true;
+
+  // To hold the selected date and time
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   final List<String> caseTypes = [
     'Contract',
@@ -28,6 +34,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   void dispose() {
     _caseTitleController.dispose();
     _descriptionController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -35,9 +42,11 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final scaffoldBackgroundColor = isDark ? Colors.black : const Color(0xFFF9F9F9);
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Scaffold(
+      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Create Case',
@@ -51,6 +60,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
       ),
       body: Column(
         children: [
+          // Step Indicator
           Container(
             color: cardBackgroundColor,
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -83,7 +93,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
             ),
           ),
 
-          // --- MODIFICATION: Updated Action Buttons ---
+          // Action Buttons
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -145,7 +155,11 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Text('Back', style: TextStyle(color: Colors.grey.shade600, fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text('Back',
+          style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 16,
+              fontWeight: FontWeight.bold)),
     );
   }
 
@@ -154,7 +168,8 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
       onPressed: () {
         // Placeholder save action
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Progress Saved!'), backgroundColor: Colors.green),
+          const SnackBar(
+              content: Text('Progress Saved!'), backgroundColor: Colors.green),
         );
       },
       style: OutlinedButton.styleFrom(
@@ -162,7 +177,9 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Text('Save', style: TextStyle(color: kPrimaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text('Save',
+          style: TextStyle(
+              color: kPrimaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -175,10 +192,12 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           backgroundColor: kPrimaryBlue,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 2,
         ),
-        child: const Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        child: const Text('Next',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -190,21 +209,26 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         onPressed: () {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Case created successfully!'), backgroundColor: Colors.green),
+            const SnackBar(
+                content: Text('Case created successfully!'),
+                backgroundColor: Colors.green),
           );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kPrimaryBlue,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 2,
         ),
-        child: const Text('Create Case', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        child: const Text('Create Case',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
 
+  // --- Step Indicator Widgets ---
   Widget _buildStepIndicator(int step, String label, {required bool isActive}) {
     final color = isActive ? kPrimaryBlue : Color(0xFFB6B6B6);
     return Column(
@@ -252,7 +276,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  // --- Step Content Widgets (Unchanged) ---
+  // --- Step Content Widgets ---
   Widget _buildStepContent(bool isDark, Color cardBackgroundColor) {
     switch (_currentStep) {
       case 0:
@@ -266,13 +290,12 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     }
   }
 
-  // --- Reusable Form Field Widgets (Unchanged) ---
+  // --- Reusable Form Field Widgets ---
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
     required String hintText,
     required bool isDark,
-    required Color cardBackgroundColor,
     int maxLines = 1,
   }) {
     return Column(
@@ -296,7 +319,8 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
             hintStyle: TextStyle(color: Colors.grey[500]),
             filled: true,
             fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -339,14 +363,18 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
-          items: items.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+          items:
+          items.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
           onChanged: onChanged,
           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
           decoration: InputDecoration(
             filled: true,
             fillColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
@@ -365,7 +393,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  // --- Step 1: Basic Info (Unchanged) ---
+  // --- Step 1: Basic Info ---
   Widget _buildBasicInfoStep(bool isDark, Color cardBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +403,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           label: 'Case Title',
           hintText: 'E.g. John vs Nigerian Govt',
           isDark: isDark,
-          cardBackgroundColor: cardBackgroundColor,
         ),
         const SizedBox(height: 20),
         _buildTextField(
@@ -383,7 +410,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           label: 'Description',
           hintText: 'Enter case description...',
           isDark: isDark,
-          cardBackgroundColor: cardBackgroundColor,
           maxLines: 5,
         ),
         const SizedBox(height: 20),
@@ -421,7 +447,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     );
   }
 
-  // --- Step 2: Participants (Unchanged) ---
+  // --- Step 2: Participants ---
   Widget _buildParticipantsStep(bool isDark, Color cardBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,25 +490,32 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(role, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              Text(role,
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(hint, style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+              Text(hint,
+                  style: TextStyle(fontSize: 13, color: Colors.grey[500])),
             ],
           ),
         ),
         TextButton(
-          onPressed: () { /* Add participant logic */ },
+          onPressed: () {
+            /* Add participant logic */
+          },
           style: TextButton.styleFrom(
             foregroundColor: kPrimaryBlue,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text('Add',
+              style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
 
-  // --- Step 3: Schedule (Unchanged) ---
+  // --- MODIFICATION: Updated Step 3 Widgets ---
   Widget _buildScheduleStep(bool isDark, Color cardBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,16 +530,70 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         const SizedBox(height: 24),
-        _buildScheduleField('Date', 'Select date', isDark),
-        const SizedBox(height: 16),
-        _buildScheduleField('Time', 'Select time', isDark),
-        const SizedBox(height: 16),
-        _buildScheduleField('Location', 'Enter courtroom/location', isDark),
+        _buildScheduleField(
+          label: 'Date',
+          // Display the selected date or the hint text
+          hint: _selectedDate == null
+              ? 'Select date'
+              : "${_selectedDate!.toLocal()}".split(' ')[0],
+          isDark: isDark,
+          icon: Icons.calendar_today_outlined,
+          onTap: () async {
+            // Show date picker and update state
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: _selectedDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            if (picked != null && picked != _selectedDate) {
+              setState(() {
+                _selectedDate = picked;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 20),
+        _buildScheduleField(
+          label: 'Time',
+          hint: _selectedTime == null
+              ? 'Select time'
+              : _selectedTime!.format(context),
+          isDark: isDark,
+          icon: Icons.access_time_outlined,
+          onTap: () async {
+            final TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedTime ?? TimeOfDay.now(),
+            );
+            if (picked != null && picked != _selectedTime) {
+              setState(() {
+                _selectedTime = picked;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 20),
+        _buildTextField(
+          controller: _locationController,
+          label: 'Location',
+          hintText: 'Enter courtroom or location',
+          isDark: isDark,
+        ),
       ],
     );
   }
 
-  Widget _buildScheduleField(String label, String hint, bool isDark) {
+  Widget _buildScheduleField({
+    required String label,
+    required String hint,
+    required bool isDark,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    // Determine if the hint text is a placeholder or a selected value
+    final bool isValueSelected = hint != 'Select date' && hint != 'Select time';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -519,20 +606,40 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: () { /* Show date/time picker or navigate */ },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Expanded(child: Text(hint, style: TextStyle(color: Colors.grey[500], fontSize: 16))),
-                Icon(Icons.chevron_right, color: Colors.grey[500])
-              ],
+        GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(
+                  color: isValueSelected
+                      ? (isDark ? Colors.white : Colors.black)
+                      : Colors.grey[500],
+                  fontSize: 16,
+                ),
+                filled: true,
+                fillColor:
+                isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+                prefixIcon: Icon(icon, color: Colors.grey[500], size: 20),
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey.shade500,
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
+                ),
+              ),
             ),
           ),
         ),
