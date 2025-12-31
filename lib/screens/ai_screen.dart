@@ -124,8 +124,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
             ),
           ),
 
-          // --- MODIFICATION: Modern Input Area ---
+          // --- Input Area ---
           Container(
+            // The outer container decoration is RESTORED
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             decoration: BoxDecoration(
@@ -142,19 +143,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // Attachment buttons
-                IconButton(
-                  icon: Icon(Icons.mic_none, color: subTextColor),
-                  onPressed: () {
-                    // Voice input
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.image_outlined, color: subTextColor),
-                  onPressed: () {
-                    // Image upload
-                  },
-                ),
                 // Text Field
                 Expanded(
                   child: TextField(
@@ -163,18 +151,42 @@ class _AIChatScreenState extends State<AIChatScreen> {
                     decoration: InputDecoration(
                       hintText: 'Ask anything',
                       hintStyle: TextStyle(color: subTextColor),
+                      // --- THIS IS THE FIX ---
+                      // The TextField is now transparent to show the container's color
+                      filled: true,
+                      fillColor: Colors.transparent,
+                      // The border is removed to avoid conflicts
                       border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      // Padding is adjusted for the new layout
                       contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10),
-                      isDense: true,
+                      const EdgeInsets.fromLTRB(12, 14, 0, 14),
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min, // Important
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.mic_none, color: subTextColor),
+                            onPressed: () {
+                              // Voice input
+                            },
+                          ),
+                          IconButton(
+                            icon:
+                            Icon(Icons.image_outlined, color: subTextColor),
+                            onPressed: () {
+                              // Image upload
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     maxLines: 5,
                     minLines: 1,
                     textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
-                const SizedBox(width: 8),
-                // Send Button
+                // Send Button is now outside the TextField's decoration
                 InkWell(
                   onTap: _sendMessage,
                   child: Container(

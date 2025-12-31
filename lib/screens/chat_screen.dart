@@ -137,7 +137,15 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                       hintText: 'Write a message...',
                       hintStyle: TextStyle(color: subTextColor),
+                      // --- THIS IS THE FIX ---
+                      // 1. Make the TextField's fill transparent
+                      filled: true,
+                      fillColor: Colors.transparent,
+                      // 2. Remove all borders from the TextField itself
                       border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      // 3. Adjust padding as needed
                       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                       isDense: true,
                     ),
