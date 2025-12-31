@@ -13,6 +13,8 @@ class CaseDetailsScreen extends StatelessWidget {
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400]! : Color(0xFF4D4D4D);
+    // Define a theme-aware divider color
+    final dividerColor = isDark ? Colors.grey[800] : Colors.grey[200];
 
     return Scaffold(
       appBar: AppBar(
@@ -178,7 +180,14 @@ class CaseDetailsScreen extends StatelessWidget {
                       label: 'AI\nAssistant',
                       cardBackgroundColor: cardBackgroundColor,
                       textColor: textColor,
-                      onTap: () {},
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Coming Soon!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -220,7 +229,6 @@ class CaseDetailsScreen extends StatelessWidget {
                       cardBackgroundColor: cardBackgroundColor,
                       textColor: textColor,
                       onTap: () {
-                        // --- MODIFICATION: Call the new modal ---
                         _showCreateTaskModal(context);
                       },
                     ),
@@ -260,7 +268,8 @@ class CaseDetailsScreen extends StatelessWidget {
                     textColor: textColor,
                     subTextColor: subTextColor,
                   ),
-                  const Divider(color: Color(0xFFD8D8D8)),
+                  // --- FIX APPLIED HERE ---
+                  Divider(color: dividerColor),
                   _buildTimelineItem(
                     icon: Icons.description_outlined,
                     title: 'Contract.pdf',
@@ -268,7 +277,8 @@ class CaseDetailsScreen extends StatelessWidget {
                     textColor: textColor,
                     subTextColor: subTextColor,
                   ),
-                  const Divider(color: Color(0xFFD8D8D8)),
+                  // --- FIX APPLIED HERE ---
+                  Divider(color: dividerColor),
                   _buildTimelineItem(
                     icon: Icons.add_circle_outline,
                     title: 'Hearing Added',
@@ -277,7 +287,8 @@ class CaseDetailsScreen extends StatelessWidget {
                     textColor: textColor,
                     subTextColor: subTextColor,
                   ),
-                  const Divider(color: Color(0xFFD8D8D8)),
+                  // --- FIX APPLIED HERE ---
+                  Divider(color: dividerColor),
                   _buildTimelineItem(
                     icon: Icons.task_alt_outlined,
                     title: 'Task Created',

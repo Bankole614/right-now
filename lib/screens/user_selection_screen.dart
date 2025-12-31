@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:right_now/screens/signup_screen.dart';
-import 'package:right_now/utils/constants.dart';
-
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class UserSelectionScreen extends StatefulWidget {
   const UserSelectionScreen({super.key});
@@ -15,8 +13,15 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // --- Theming variables for consistency ---
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final scaffoldBackgroundColor = isDark ? Colors.black : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -24,31 +29,36 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Who are you?',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Choose how you\'d like to use RightNow',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black54,
+                  color: subTextColor,
                 ),
               ),
               const SizedBox(height: 32),
+              // Use Expanded to allow the cards to fill available space
               Expanded(
                 child: Column(
+                  // Use mainAxisAlignment to distribute space if needed
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     UserRoleCard(
                       title: 'Lawyer',
-                      description: 'Manage multiple cases, assign tasks, and communicate with clients',
+                      description:
+                      'Manage multiple cases, assign tasks, and communicate with clients',
                       imagePath: 'assets/images/lawyer.png',
                       isSelected: selectedRole == 'lawyer',
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           selectedRole = 'lawyer';
@@ -58,9 +68,11 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
                     const SizedBox(height: 20),
                     UserRoleCard(
                       title: 'Client',
-                      description: 'Track your case, upload documents, and ask the AI plain-language questions',
+                      description:
+                      'Track your case, upload documents, and ask the AI plain-language questions',
                       imagePath: 'assets/images/client.png',
                       isSelected: selectedRole == 'client',
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           selectedRole = 'client';
@@ -71,23 +83,23 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+              // Continue Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
                 child: ElevatedButton(
                   onPressed: selectedRole != null
                       ? () {
+                    // Navigate to the next screen, passing the role
                     Navigator.pushNamed(context, '/signup');
                   }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryBlue,
-                    disabledBackgroundColor:
-                    const Color(0xFF3F51B5).withOpacity(0.5),
+                    disabledBackgroundColor: Colors.grey.withOpacity(0.5),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 0,
                   ),
                   child: const Text(
                     'Continue',
@@ -100,12 +112,12 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Center(
+              Center(
                 child: Text(
                   'By continuing, you agree to our Terms of Service',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black45,
+                    color: subTextColor,
                   ),
                 ),
               ),
@@ -122,6 +134,7 @@ class UserRoleCard extends StatelessWidget {
   final String description;
   final String imagePath;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const UserRoleCard({
@@ -130,6 +143,7 @@ class UserRoleCard extends StatelessWidget {
     required this.description,
     required this.imagePath,
     required this.isSelected,
+    required this.isDark,
     required this.onTap,
   });
 
@@ -138,40 +152,50 @@ class UserRoleCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 200,
+        // Allow the card to grow if needed
+        width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
+          // Use a subtle border for dark mode when not selected
           border: Border.all(
-            color: isSelected ? kPrimaryBlue : Colors.transparent,
-            width: 3,
+            color: isSelected
+                ? kPrimaryBlue
+                : (isDark ? Colors.grey[800]! : Colors.transparent),
+            width: isSelected ? 3 : 1,
           ),
-          boxShadow: [
+          boxShadow: isDark
+              ? null // No shadow in dark mode for a flatter look
+              : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          // The inner radius should be slightly smaller than the container's
+          borderRadius: BorderRadius.circular(15),
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Use Image.asset to display the image
               Image.asset(
                 imagePath,
                 fit: BoxFit.cover,
+                // Add a color blend for dark mode to tone down the image
+                color: isDark ? Colors.black.withOpacity(0.3) : null,
+                colorBlendMode: isDark ? BlendMode.darken : null,
               ),
-              // Gradient overlay
+              // Gradient overlay to ensure text is always readable
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
+                    stops: const [0.4, 1.0], // Start gradient lower
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.8),
                     ],
                   ),
                 ),
@@ -196,8 +220,8 @@ class UserRoleCard extends StatelessWidget {
                       description,
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Colors.white,
-                        height: 1.3,
+                        color: Colors.white70,
+                        height: 1.4,
                       ),
                     ),
                   ],

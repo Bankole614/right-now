@@ -17,7 +17,6 @@ class LawyerProfilePage extends StatelessWidget {
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           data['name'],
@@ -26,7 +25,6 @@ class LawyerProfilePage extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        backgroundColor: kPrimaryBlue,
         centerTitle: true,
       ),
       body: SingleChildScrollView(

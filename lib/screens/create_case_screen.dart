@@ -46,7 +46,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Create Case',

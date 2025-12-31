@@ -125,6 +125,9 @@ ThemeData _darkTheme() {
     brightness: Brightness.dark,
     // Set the global font family for the dark theme
     fontFamily: GoogleFonts.urbanist().fontFamily,
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) => const Icon(Icons.chevron_left, size: 30,),
+    ),
     scaffoldBackgroundColor: const Color(0xFF121212),
     primaryColor: kPrimaryBlue,
     appBarTheme: const AppBarTheme(
