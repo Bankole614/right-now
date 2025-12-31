@@ -1,6 +1,7 @@
 import 'dart:async'; // Import the async library for the Timer
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class VerifyAccountScreen extends StatefulWidget {
   const VerifyAccountScreen({super.key});
@@ -19,9 +20,8 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
         (index) => FocusNode(),
   );
 
-  // --- Start of new code for the timer ---
   late Timer _timer;
-  int _start = 60; // Countdown duration in seconds
+  int _start = 60;
   bool _isTimerRunning = false;
 
   void startTimer() {
@@ -31,11 +31,15 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
           (Timer timer) {
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
         if (_start == 0) {
           setState(() {
             timer.cancel();
             _isTimerRunning = false;
-            _start = 60; // Reset for next time
+            _start = 60;
           });
         } else {
           setState(() {
@@ -49,9 +53,8 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
   @override
   void initState() {
     super.initState();
-    startTimer(); // Start the timer when the screen loads
+    startTimer();
   }
-  // --- End of new code for the timer ---
 
   @override
   void dispose() {
@@ -61,7 +64,9 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     for (var node in _focusNodes) {
       node.dispose();
     }
-    _timer.cancel(); // Make sure to cancel the timer to avoid memory leaks
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 
@@ -76,69 +81,87 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // --- Theming variables for consistency ---
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final scaffoldBackgroundColor = isDark ? Colors.black : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: scaffoldBackgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left, size: 30, color: textColor),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
               Image.asset(
                 'assets/images/gavel.png',
                 height: 80,
-                width: 80,
+                color: isDark ? Colors.white : null,
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Verify your Account',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 24),
-              RichText(
-                textAlign: TextAlign.center,
-                text: const TextSpan(
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.5,
-                  ),
-                  children: [
-                    TextSpan(
-                        text:
-                        'Please enter the Verification code sent to\n'),
-                    TextSpan(
-                      text: 'work@example.com',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    TextSpan(text: ' to proceed'),
-                  ],
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 16),
               RichText(
-                text: const TextSpan(
+                textAlign: TextAlign.center,
+                text: TextSpan(
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: subTextColor,
+                    height: 1.5,
                   ),
                   children: [
-                    TextSpan(text: 'Not your mail? '),
+                    const TextSpan(text: 'Please enter the Verification code sent to\n'),
                     TextSpan(
-                      text: 'Edit here',
+                      text: 'work@example.com',
                       style: TextStyle(
-                        color: Color(0xFF3F51B5),
                         fontWeight: FontWeight.w600,
+                        color: textColor,
                       ),
                     ),
+                    const TextSpan(text: ' to proceed'),
                   ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () => Navigator.pop(context), // Go back to edit email
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: subTextColor,
+                    ),
+                    children: const [
+                      TextSpan(text: 'Not your mail? '),
+                      TextSpan(
+                        text: 'Edit here',
+                        style: TextStyle(
+                          color: kPrimaryBlue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -146,29 +169,29 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(
                   6,
-                      (index) => _buildOTPBox(index),
+                      (index) => _buildOTPBox(index, isDark),
                 ),
               ),
               const SizedBox(height: 24),
-              // --- Updated RichText for the countdown timer ---
               GestureDetector(
-                onTap: _isTimerRunning ? null : () {
-                  // This will only be tappable when the timer is not running
-                  print("Resending code..."); // Add your resend logic here
+                onTap: _isTimerRunning
+                    ? null
+                    : () {
+                  // Resend logic
                   startTimer();
                 },
                 child: RichText(
                   text: TextSpan(
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.black54,
+                      color: subTextColor,
                     ),
                     children: [
                       const TextSpan(text: 'Didn\'t receive code? '),
                       TextSpan(
                         text: _isTimerRunning ? 'Resend in ${_start}s' : 'Resend',
                         style: TextStyle(
-                          color: _isTimerRunning ? Colors.grey : const Color(0xFF3F51B5),
+                          color: _isTimerRunning ? Colors.grey : kPrimaryBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -179,24 +202,23 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
-                height: 52,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/reset');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3F51B5),
+                    backgroundColor: kPrimaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 0,
                   ),
                   child: const Text(
                     'Verify',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -208,14 +230,12 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     );
   }
 
-  Widget _buildOTPBox(int index) {
-    return Container(
-      width: 45,
-      height: 45,
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
+  Widget _buildOTPBox(int index, bool isDark) {
+    final fillColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6);
+
+    return SizedBox(
+      width: 48,
+      height: 48,
       child: TextField(
         controller: _controllers[index],
         focusNode: _focusNodes[index],
@@ -225,11 +245,20 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           counterText: '',
-          border: InputBorder.none,
+          filled: true,
+          fillColor: fillColor,
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
+          ),
         ),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,

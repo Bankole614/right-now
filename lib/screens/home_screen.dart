@@ -325,7 +325,9 @@ class HomeScreen extends StatelessWidget {
             subtitle: 'Get instant guidance on your case. Summarize your documents',
             textColor: isDark ? Colors.white : const Color(0xFF3E3E3E),
             subtitleColor: isDark ? Colors.grey[400] : const Color(0xFF4F4F4F),
-            onTap: () {},
+            onTap: () {
+
+            },
           ),
           _buildQuickCard(
             color: isDark ? const Color(0xFF1A1F2E) : const Color(0xFFE1E6FF),

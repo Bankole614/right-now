@@ -49,35 +49,41 @@ class _UserSelectionScreenState extends State<UserSelectionScreen> {
               // Use Expanded to allow the cards to fill available space
               Expanded(
                 child: Column(
-                  // Use mainAxisAlignment to distribute space if needed
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    UserRoleCard(
-                      title: 'Lawyer',
-                      description:
-                      'Manage multiple cases, assign tasks, and communicate with clients',
-                      imagePath: 'assets/images/lawyer.png',
-                      isSelected: selectedRole == 'lawyer',
-                      isDark: isDark,
-                      onTap: () {
-                        setState(() {
-                          selectedRole = 'lawyer';
-                        });
-                      },
+                    // --- FIX APPLIED HERE ---
+                    // Wrap each card in Expanded to give it a defined height
+                    Expanded(
+                      child: UserRoleCard(
+                        title: 'Lawyer',
+                        description:
+                        'Manage multiple cases, assign tasks, and communicate with clients',
+                        imagePath: 'assets/images/lawyer.png',
+                        isSelected: selectedRole == 'lawyer',
+                        isDark: isDark,
+                        onTap: () {
+                          setState(() {
+                            selectedRole = 'lawyer';
+                          });
+                        },
+                      ),
                     ),
                     const SizedBox(height: 20),
-                    UserRoleCard(
-                      title: 'Client',
-                      description:
-                      'Track your case, upload documents, and ask the AI plain-language questions',
-                      imagePath: 'assets/images/client.png',
-                      isSelected: selectedRole == 'client',
-                      isDark: isDark,
-                      onTap: () {
-                        setState(() {
-                          selectedRole = 'client';
-                        });
-                      },
+                    // --- FIX APPLIED HERE ---
+                    Expanded(
+                      child: UserRoleCard(
+                        title: 'Client',
+                        description:
+                        'Track your case, upload documents, and ask the AI plain-language questions',
+                        imagePath: 'assets/images/client.png',
+                        isSelected: selectedRole == 'client',
+                        isDark: isDark,
+                        onTap: () {
+                          setState(() {
+                            selectedRole = 'client';
+                          });
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -152,7 +158,6 @@ class UserRoleCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // Allow the card to grow if needed
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
