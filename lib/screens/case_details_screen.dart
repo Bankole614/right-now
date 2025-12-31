@@ -72,7 +72,8 @@ class CaseDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Client',
-                              style: TextStyle(color: subTextColor, fontSize: 12),
+                              style:
+                              TextStyle(color: subTextColor, fontSize: 12),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -93,7 +94,8 @@ class CaseDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Lawyer',
-                              style: TextStyle(color: subTextColor, fontSize: 12),
+                              style:
+                              TextStyle(color: subTextColor, fontSize: 12),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -111,7 +113,8 @@ class CaseDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: kPrimaryBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -147,8 +150,11 @@ class CaseDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: LinearProgressIndicator(
                             value: 0.6,
-                            backgroundColor: isDark ? Colors.grey[800] : Colors.grey.shade200,
-                            valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
+                            backgroundColor: isDark
+                                ? Colors.grey[800]
+                                : Colors.grey.shade200,
+                            valueColor:
+                            const AlwaysStoppedAnimation<Color>(kPrimaryBlue),
                             minHeight: 6,
                           ),
                         ),
@@ -185,7 +191,8 @@ class CaseDetailsScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const DocumentsScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const DocumentsScreen()),
                         );
                       },
                     ),
@@ -212,7 +219,10 @@ class CaseDetailsScreen extends StatelessWidget {
                       label: 'Create\nTask',
                       cardBackgroundColor: cardBackgroundColor,
                       textColor: textColor,
-                      onTap: () {},
+                      onTap: () {
+                        // --- MODIFICATION: Call the new modal ---
+                        _showCreateTaskModal(context);
+                      },
                     ),
                   ),
                 ],
@@ -282,7 +292,6 @@ class CaseDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // --- SECTION RESTORED ---
             // Documents Card
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -315,6 +324,116 @@ class CaseDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16), // Bottom spacing
           ],
+        ),
+      ),
+    );
+  }
+
+  // --- NEW WIDGET: Bottom sheet for creating a task ---
+  void _showCreateTaskModal(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final modalBgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows the modal to take up more space
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        // Padding to avoid the keyboard
+        padding:
+        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: modalBgColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with Title and Close button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Create a Task',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              // Subtitle
+              Text(
+                'Only the parties involved in this case can see this task.',
+                style: TextStyle(fontSize: 14, color: subTextColor),
+              ),
+              const SizedBox(height: 24),
+              // Task Input Field
+              TextField(
+                autofocus: true,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Enter your task',
+                  filled: true,
+                  fillColor:
+                  isDark ? const Color(0xFF2C2C2E) : Colors.grey[100],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.grey[700]! : Colors.grey.shade300,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                    const BorderSide(color: kPrimaryBlue, width: 2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Create Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Add task creation logic here
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Task created successfully!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Create',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -404,7 +523,6 @@ class CaseDetailsScreen extends StatelessWidget {
     );
   }
 
-  // This widget was missing from the body but is needed
   Widget _buildDocumentCard(String title) {
     return Expanded(
       child: Container(

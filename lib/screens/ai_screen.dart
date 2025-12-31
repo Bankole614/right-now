@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -9,13 +10,15 @@ class AIChatScreen extends StatefulWidget {
 
 class _AIChatScreenState extends State<AIChatScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController(); // For auto-scrolling
   final List<Map<String, dynamic>> _messages = [
     {
       'text': 'Does this document represent the final word on the case?',
       'isUser': true,
     },
     {
-      'text': 'Not necessarily. A single case might generate many documents, such as initial complaints, motions, evidence submissions, and final judgments. An initial filing outlines the claims, while a court\'s judgment or decision provides the final, legally binding resolution for that stage of the proceedings.',
+      'text':
+      'Not necessarily. A single case might generate many documents, such as initial complaints, motions, evidence submissions, and final judgments. An initial filing outlines the claims, while a court\'s judgment or decision provides the final, legally binding resolution for that stage of the proceedings.',
       'isUser': false,
     },
   ];
@@ -23,6 +26,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose(); // Dispose the scroll controller
     super.dispose();
   }
 
@@ -31,10 +35,11 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
     setState(() {
       _messages.add({
-        'text': _messageController.text,
+        'text': _messageController.text.trim(),
         'isUser': true,
       });
       _messageController.clear();
+      _scrollToBottom(); // Scroll on user message
     });
 
     // Simulate AI response
@@ -42,18 +47,43 @@ class _AIChatScreenState extends State<AIChatScreen> {
       if (mounted) {
         setState(() {
           _messages.add({
-            'text': 'I\'m analyzing your question. This is a simulated AI response.',
+            'text':
+            'I\'m analyzing your question. This is a simulated AI response.',
             'isUser': false,
           });
+          _scrollToBottom(); // Scroll on AI response
         });
+      }
+    });
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // --- Theming variables for consistency ---
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final scaffoldBackgroundColor =
+    isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
+    final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final userBubbleColor = kPrimaryBlue;
+    final aiBubbleColor = isDark ? const Color(0xFF2C2C2E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Chat Help',
@@ -63,8 +93,8 @@ class _AIChatScreenState extends State<AIChatScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2D4ED8),
-        automaticallyImplyLeading: false,
+        backgroundColor: kPrimaryBlue,
+        automaticallyImplyLeading: false, // Assuming this is intentional
         actions: [
           IconButton(
             icon: const Icon(Icons.history, color: Colors.white),
@@ -79,6 +109,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
           // Messages List
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
@@ -86,67 +117,74 @@ class _AIChatScreenState extends State<AIChatScreen> {
                 return _buildMessageBubble(
                   message['text'],
                   message['isUser'],
+                  userBubbleColor,
+                  aiBubbleColor,
                 );
               },
             ),
           ),
 
-          // Input Area
+          // --- MODIFICATION: Modern Input Area ---
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            decoration: BoxDecoration(
+              color: cardBackgroundColor,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                // Attachment buttons
+                IconButton(
+                  icon: Icon(Icons.mic_none, color: subTextColor),
+                  onPressed: () {
+                    // Voice input
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.image_outlined, color: subTextColor),
+                  onPressed: () {
+                    // Image upload
+                  },
+                ),
+                // Text Field
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
-                      borderRadius: BorderRadius.circular(25),
+                  child: TextField(
+                    controller: _messageController,
+                    style: TextStyle(color: textColor),
+                    decoration: InputDecoration(
+                      hintText: 'Ask anything',
+                      hintStyle: TextStyle(color: subTextColor),
+                      border: InputBorder.none,
+                      contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10),
+                      isDense: true,
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            decoration: const InputDecoration(
-                              hintText: 'Ask anything',
-                              hintStyle: TextStyle(color: Colors.black38),
-                              border: InputBorder.none,
-                            ),
-                            maxLines: null,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.mic_none, color: Colors.black54),
-                          onPressed: () {
-                            // Voice input
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                        const SizedBox(width: 4),
-                        IconButton(
-                          icon: const Icon(Icons.image_outlined, color: Colors.black54),
-                          onPressed: () {
-                            // Image upload
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
-                    ),
+                    maxLines: 5,
+                    minLines: 1,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF2D4ED8),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.send, color: Colors.white, size: 20),
-                    onPressed: _sendMessage,
+                // Send Button
+                InkWell(
+                  onTap: _sendMessage,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: const BoxDecoration(
+                      color: kPrimaryBlue,
+                      shape: BoxShape.circle,
+                    ),
+                    child:
+                    const Icon(Icons.send, color: Colors.white, size: 20),
                   ),
                 ),
               ],
@@ -157,18 +195,22 @@ class _AIChatScreenState extends State<AIChatScreen> {
     );
   }
 
-  Widget _buildMessageBubble(String text, bool isUser) {
+  // --- MODIFICATION: Refined Message Bubble Widget ---
+  Widget _buildMessageBubble(
+      String text, bool isUser, Color userBubbleColor, Color aiBubbleColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+        isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // AI Icon
           if (!isUser) ...[
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2D4ED8),
+              decoration: const BoxDecoration(
+                color: kPrimaryBlue,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -177,24 +219,36 @@ class _AIChatScreenState extends State<AIChatScreen> {
                 size: 20,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
+          // Message Bubble
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? const Color(0xFF2D4ED8) : Colors.white,
+                color: isUser ? userBubbleColor : aiBubbleColor,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(16),
-                  topRight: const Radius.circular(16),
-                  bottomLeft: Radius.circular(isUser ? 16 : 4),
-                  bottomRight: Radius.circular(isUser ? 4 : 16),
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  bottomLeft: Radius.circular(isUser ? 20 : 4),
+                  bottomRight: Radius.circular(isUser ? 4 : 20),
                 ),
+                boxShadow: !isUser && Theme.of(context).brightness == Brightness.light
+                    ? [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                  ),
+                ]
+                    : null,
               ),
               child: Text(
                 text,
                 style: TextStyle(
-                  color: isUser ? Colors.white : Colors.black87,
+                  color: isUser
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyLarge?.color,
                   fontSize: 14,
                   height: 1.4,
                 ),

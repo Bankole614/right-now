@@ -128,10 +128,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         ),
         centerTitle: true,
         backgroundColor: kPrimaryBlue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

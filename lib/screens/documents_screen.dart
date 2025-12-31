@@ -50,10 +50,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ),
         centerTitle: true,
         backgroundColor: kPrimaryBlue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
