@@ -68,7 +68,7 @@ class _DeleteAccountSheetState extends State<_DeleteAccountSheet> {
     final isDark = theme.brightness == Brightness.dark;
 
     return FractionallySizedBox(
-      heightFactor: 0.55,
+      heightFactor: 0.5,
       child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
