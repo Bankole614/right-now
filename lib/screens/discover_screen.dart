@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'lawyer_profile.dart'; // Uncomment this when you have the lawyer_profile.dart file
+import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
+import 'lawyer_profile.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -12,6 +13,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'All';
 
+  // Dummy data for lawyers
   final List<Map<String, dynamic>> lawyers = List.generate(6, (i) {
     return {
       'name': 'Sarah Conor',
@@ -25,6 +27,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // --- Theming variables for consistency ---
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -34,121 +43,85 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF2D4ED8),
+        backgroundColor: kPrimaryBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            // MODIFIED: Search bar with absolute positioned icon and border
-            Stack(
-              alignment: Alignment.centerLeft,
+      body: Column(
+        children: [
+          // --- MODIFICATION: Search and Filter Section Card ---
+          Container(
+            color: cardBackgroundColor,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
               children: [
+                // Styled Search Bar
                 TextField(
                   controller: _searchController,
+                  style: TextStyle(color: textColor),
                   decoration: InputDecoration(
                     hintText: 'Search by name, specialization, or location',
-                    hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+                    hintStyle: TextStyle(color: subTextColor, fontSize: 14),
+                    prefixIcon: Icon(Icons.search, color: subTextColor, size: 22),
                     filled: true,
-                    fillColor: const Color(0xFFF3F4F6),
-                    contentPadding: const EdgeInsets.only(
-                      left: 48, // Space for the icon
-                      right: 16,
-                      top: 14,
-                      bottom: 14,
-                    ),
+                    fillColor: isDark
+                        ? const Color(0xFF2C2C2E)
+                        : const Color(0xFFF3F4F6),
+                    contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300, // Border color
-                        width: 1.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300, // Border color
-                        width: 1.0,
-                      ),
+                      borderSide: BorderSide.none,
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF2D4ED8), // Border color on focus
-                        width: 1.5,
-                      ),
+                      borderSide: const BorderSide(color: kPrimaryBlue, width: 2),
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Icon(Icons.search, color: Colors.black38, size: 22),
+                const SizedBox(height: 16),
+                // Filter chips
+                SizedBox(
+                  height: 38,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _filterChip('All', isDark),
+                      _filterChip('Location', isDark),
+                      _filterChip('Rating', isDark),
+                      _filterChip('Fee', isDark),
+                    ],
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+          ),
+          const SizedBox(height: 8),
 
-            // Filter chips
-            SizedBox(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _filterChip('All'),
-                  _filterChip('Location'),
-                  _filterChip('Rating'),
-                  _filterChip('fee'),
-                ],
-              ),
+          // --- MODIFICATION: Lawyers list with spacing ---
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: lawyers.length,
+              itemBuilder: (context, index) {
+                final lawyer = lawyers[index];
+                return _lawyerCard(
+                  context,
+                  lawyer,
+                  isDark,
+                  cardBackgroundColor,
+                  textColor,
+                  subTextColor,
+                );
+              },
             ),
-            const SizedBox(height: 16),
-
-            // Lawyers list
-            Expanded(
-              child: ListView.builder(
-                itemCount: lawyers.length,
-                itemBuilder: (context, index) {
-                  final lawyer = lawyers[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: GestureDetector(
-                      onTap: () {
-                        // Navigate to lawyer profile
-                        // Uncomment when you have the lawyer_profile.dart file
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => LawyerProfilePage(data: lawyer),
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Opening ${lawyer['name']} profile...')),
-                        );
-                      },
-                      child: _lawyerCard(
-                        context,
-                        lawyer['name'],
-                        lawyer['specialty'],
-                        lawyer['experience'],
-                        lawyer['rating'],
-                        lawyer['reviews'],
-                        lawyer['avatar'],
-                        lawyer,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _filterChip(String label) {
+  Widget _filterChip(String label, bool isDark) {
     final selected = _selectedFilter == label;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -156,111 +129,137 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         label: Text(label),
         selected: selected,
         onSelected: (_) => setState(() => _selectedFilter = label),
-        selectedColor: const Color(0xFF2D4ED8),
-        backgroundColor: Colors.white,
+        selectedColor: kPrimaryBlue,
+        backgroundColor: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
         labelStyle: TextStyle(
-          color: selected ? Colors.white : Colors.black87,
+          color: selected
+              ? Colors.white
+              : (isDark ? Colors.grey[300] : Colors.black87),
           fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
         ),
         shape: RoundedRectangleBorder(
+          side: selected
+              ? BorderSide.none
+              : BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
           borderRadius: BorderRadius.circular(8),
         ),
+        showCheckmark: false,
       ),
     );
   }
 
   Widget _lawyerCard(
       BuildContext context,
-      String name,
-      String specialty,
-      String experience,
-      int rating,
-      int reviews,
-      String avatarUrl,
       Map<String, dynamic> data,
+      bool isDark,
+      Color cardBackgroundColor,
+      Color textColor,
+      Color subTextColor,
       ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: NetworkImage(avatarUrl),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '$specialty · $experience',
-                      style: const TextStyle(
-                        color: Colors.black54,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        ...List.generate(
-                          rating,
-                              (i) => const Icon(
-                            Icons.star,
-                            size: 16,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '($reviews)',
-                          style: const TextStyle(
-                            color: Colors.black45,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => LawyerProfilePage(data: data),
           ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // Prevent button click from propagating to card
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2D4ED8),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: cardBackgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: isDark
+              ? null
+              : [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: NetworkImage(data['avatar']),
                 ),
-              ),
-              child: const Text(
-                'Book Consultation',
-                style: TextStyle(fontSize: 13),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data['name'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: textColor,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${data['specialty']} · ${data['experience']}',
+                        style: TextStyle(
+                          color: subTextColor,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          ...List.generate(
+                            data['rating'],
+                                (i) => const Icon(
+                              Icons.star,
+                              size: 16,
+                              color: Colors.amber,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '(${data['reviews']})',
+                            style: TextStyle(
+                              color: subTextColor.withOpacity(0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // This can have its own specific action,
+                  // e.g., opening a booking modal directly.
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0, // No shadow needed for the button
+                ),
+                child: const Text(
+                  'Book Consultation',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -69,12 +69,11 @@ ThemeData _lightTheme() {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    // Set the global font family for the light theme
-    fontFamily: GoogleFonts.inter().fontFamily,
+    fontFamily: GoogleFonts.urbanist().fontFamily,
     scaffoldBackgroundColor: Color(0xFFF2F2F2),
     primaryColor: kPrimaryBlue,
     actionIconTheme: ActionIconThemeData(
-      backButtonIconBuilder: (BuildContext context) => const Icon(Icons.chevron_left), // Your chosen arrow type
+      backButtonIconBuilder: (BuildContext context) => const Icon(Icons.chevron_left, size: 30,),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: kPrimaryBlue,
