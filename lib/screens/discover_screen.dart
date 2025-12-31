@@ -30,6 +30,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     // --- Theming variables for consistency ---
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black87;
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
@@ -43,7 +44,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: kPrimaryBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),

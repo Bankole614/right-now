@@ -113,11 +113,9 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
     // --- Theming variables for consistency ---
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final scaffoldBackgroundColor = isDark ? Colors.black : const Color(0xFFF3F4F6);
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Upload Document',
@@ -127,7 +125,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: kPrimaryBlue,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

@@ -278,7 +278,7 @@ class _CasesScreenState extends State<CasesScreen> {
           SnackBar(content: Text('Tapped on: ${caseItem['title']}')),
         );
       },
-      borderRadius: BorderRadius.circular(12), // Match the container's border radius
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
           color: isDark
