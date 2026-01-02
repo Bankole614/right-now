@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/widgets/consultation_modal.dart';
 import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 import 'lawyer_profile.dart';
 
@@ -240,8 +241,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // This can have its own specific action,
-                  // e.g., opening a booking modal directly.
+                  showConsultationModal(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kPrimaryBlue,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:right_now/screens/widgets/consultation_modal.dart';
 import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
 
 class LawyerProfilePage extends StatelessWidget {
@@ -65,7 +66,7 @@ class LawyerProfilePage extends StatelessWidget {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              // Handle booking logic
+              showConsultationModal(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: kPrimaryBlue,

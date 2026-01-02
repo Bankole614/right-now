@@ -478,7 +478,7 @@ class HomeScreen extends StatelessWidget {
                   message,
                   style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.black54,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -489,7 +489,7 @@ class HomeScreen extends StatelessWidget {
             timeAgo,
             style: TextStyle(
               color: isDark ? Colors.grey[500] : Colors.black45,
-              fontSize: 11,
+              fontSize: 12,
             ),
           ),
         ],

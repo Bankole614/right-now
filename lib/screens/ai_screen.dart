@@ -93,8 +93,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: kPrimaryBlue,
-        automaticallyImplyLeading: false, // Assuming this is intentional
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.history, color: Colors.white),
@@ -126,7 +125,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
           // --- Input Area ---
           Container(
-            // The outer container decoration is RESTORED
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             decoration: BoxDecoration(
@@ -151,15 +149,11 @@ class _AIChatScreenState extends State<AIChatScreen> {
                     decoration: InputDecoration(
                       hintText: 'Ask anything',
                       hintStyle: TextStyle(color: subTextColor),
-                      // --- THIS IS THE FIX ---
-                      // The TextField is now transparent to show the container's color
                       filled: true,
                       fillColor: Colors.transparent,
-                      // The border is removed to avoid conflicts
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      // Padding is adjusted for the new layout
                       contentPadding:
                       const EdgeInsets.fromLTRB(12, 14, 0, 14),
                       suffixIcon: Row(
@@ -186,7 +180,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                     textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
-                // Send Button is now outside the TextField's decoration
+                // Send Button
                 InkWell(
                   onTap: _sendMessage,
                   child: Container(
@@ -207,7 +201,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
     );
   }
 
-  // --- MODIFICATION: Refined Message Bubble Widget ---
+  // --- Refined Message Bubble Widget ---
   Widget _buildMessageBubble(
       String text, bool isUser, Color userBubbleColor, Color aiBubbleColor) {
     return Padding(
