@@ -17,7 +17,7 @@ void showUploadImageModal(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: modalBgColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
