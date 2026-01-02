@@ -77,7 +77,6 @@ class _ChatScreenState extends State<ChatScreen> {
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Chat',
@@ -87,7 +86,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: kPrimaryBlue,
       ),
       body: Column(
         children: [

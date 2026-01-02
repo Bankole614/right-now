@@ -130,8 +130,8 @@ ThemeData _darkTheme() {
     ),
     scaffoldBackgroundColor: const Color(0xFF121212),
     primaryColor: kPrimaryBlue,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.grey[950],
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(

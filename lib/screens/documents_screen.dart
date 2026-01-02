@@ -49,7 +49,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: kPrimaryBlue,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

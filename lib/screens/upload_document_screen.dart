@@ -1,6 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:right_now/utils/constants.dart'; // Assuming kPrimaryBlue is here
+import 'package:image_picker/image_picker.dart';
+import 'package:right_now/utils/constants.dart';
+import 'package:right_now/screens/camera_screen.dart';
 
 class UploadDocumentScreen extends StatefulWidget {
   const UploadDocumentScreen({super.key});
@@ -14,6 +16,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   String _selectedDocumentType = 'Evidence';
   bool _hasSelectedFile = false;
   String? _fileName;
+  dynamic _selectedFile; // Store the actual file
 
   final List<String> documentTypes = [
     'Evidence',
@@ -33,10 +36,10 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   }
 
   void _showUploadModal() {
-    // Inherit theme data for the modal
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final modalBgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final itemBgColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6);
+    final dividerColor = isDark ? Colors.grey[800] : Colors.grey[200];
 
     showModalBottomSheet(
       context: context,
@@ -46,7 +49,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: modalBgColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -69,36 +72,27 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               itemBgColor,
                   () {
                 Navigator.pop(context);
-                setState(() {
-                  _fileName = 'captured_photo.jpg';
-                  _hasSelectedFile = true;
-                });
+                _takePhoto();
               },
             ),
-            const Divider(height: 32),
+            Divider(height: 32, color: dividerColor),
             _buildModalOption(
               Icons.photo_library_outlined,
               'Photo Library',
               itemBgColor,
                   () {
                 Navigator.pop(context);
-                setState(() {
-                  _fileName = 'gallery_image.jpg';
-                  _hasSelectedFile = true;
-                });
+                _pickFromGallery();
               },
             ),
-            const Divider(height: 32),
+            Divider(height: 32, color: dividerColor),
             _buildModalOption(
               Icons.folder_outlined,
               'Choose File',
               itemBgColor,
                   () {
                 Navigator.pop(context);
-                setState(() {
-                  _fileName = 'financial_report_q4.pdf';
-                  _hasSelectedFile = true;
-                });
+                _pickFile();
               },
             ),
             const SizedBox(height: 16),
@@ -108,9 +102,42 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
     );
   }
 
+  void _takePhoto() async {
+    final photo = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CameraScreen()),
+    );
+    if (photo != null && mounted) {
+      setState(() {
+        _selectedFile = photo;
+        _fileName = photo.name;
+        _hasSelectedFile = true;
+      });
+    }
+  }
+
+  void _pickFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null && mounted) {
+      setState(() {
+        _selectedFile = image;
+        _fileName = image.name;
+        _hasSelectedFile = true;
+      });
+    }
+  }
+
+  void _pickFile() async {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Coming soon!')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // --- Theming variables for consistency ---
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final subTextColor = isDark ? Colors.grey[400]! : Colors.black54;
@@ -131,7 +158,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- MODIFICATION: Document Title Field ---
             _buildSectionLabel('Document Title', isDark),
             const SizedBox(height: 8),
             _buildTextField(
@@ -141,7 +167,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
             ),
             const SizedBox(height: 24),
 
-            // --- MODIFICATION: Document Type Dropdown ---
             _buildSectionLabel('Document Type', isDark),
             const SizedBox(height: 8),
             _buildDropdownField(
@@ -156,7 +181,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
             ),
             const SizedBox(height: 24),
 
-            // --- MODIFICATION: File Upload Area ---
             _buildSectionLabel('File', isDark),
             const SizedBox(height: 8),
             if (_hasSelectedFile)
@@ -203,8 +227,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
       ),
     );
   }
-
-  // --- Reusable and Refactored Widgets ---
 
   Widget _buildSectionLabel(String label, bool isDark) {
     return Text(
@@ -304,6 +326,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               setState(() {
                 _hasSelectedFile = false;
                 _fileName = null;
+                _selectedFile = null;
               });
             },
           ),
@@ -319,17 +342,12 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         color: Colors.grey.shade400,
         strokeWidth: 1.5,
         dashPattern: const [6, 6],
-        // MODIFICATION: The 'borderType' property is removed.
-        // The radius is now controlled by the child's decoration.
         radius: const Radius.circular(12),
-        // The child's shape will now define the border's shape.
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 40),
           decoration: BoxDecoration(
-            // This color makes the inside of the border visible
             color: isDark ? const Color(0xFF1E1E1E).withOpacity(0.5) : Colors.white,
-            // This radius must match the radius in DottedBorder
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
