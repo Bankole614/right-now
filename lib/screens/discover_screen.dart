@@ -52,11 +52,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         children: [
           // --- MODIFICATION: Search and Filter Section Card ---
           Container(
-            color: cardBackgroundColor,
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Column(
               children: [
-                // Styled Search Bar
                 TextField(
                   controller: _searchController,
                   style: TextStyle(color: textColor),

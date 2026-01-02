@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:right_now/screens/complete_registration_screen.dart';
 import '../utils/constants.dart';
 import '../providers/theme_provider.dart';
 import 'edit_profile_screen.dart';
@@ -295,6 +296,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
+                  _tile(
+                    icon: Icons.person_add_alt_1_outlined,
+                    label: 'Complete Registration',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CompleteRegistrationScreen(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
                   _tile(
                     icon: Icons.lock_outline,
@@ -412,7 +424,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                           ),
                         ],
-                      ),
+                      ), 
                     ),
                   ),
 
@@ -498,7 +510,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
       child: Column(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 50,
             backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=12'),
           ),
@@ -525,7 +537,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               ...List.generate(
                 5,
-                    (i) => Icon(
+                (i) => const Icon(
                   Icons.star,
                   color: Colors.amber,
                   size: 20,

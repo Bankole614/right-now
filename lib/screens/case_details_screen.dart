@@ -177,23 +177,6 @@ class CaseDetailsScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _buildQuickAction(
-                      icon: Icons.psychology_outlined,
-                      label: 'AI\nAssistant',
-                      cardBackgroundColor: cardBackgroundColor,
-                      textColor: textColor,
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Coming Soon!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildQuickAction(
                       icon: Icons.upload_file_outlined,
                       label: 'Upload\nDocument',
                       cardBackgroundColor: cardBackgroundColor,
@@ -231,6 +214,23 @@ class CaseDetailsScreen extends StatelessWidget {
                       textColor: textColor,
                       onTap: () {
                         _showCreateTaskModal(context);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildQuickAction(
+                      icon: Icons.psychology_outlined,
+                      label: 'AI\nAssistant',
+                      cardBackgroundColor: cardBackgroundColor,
+                      textColor: textColor,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Coming Soon!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -475,7 +475,7 @@ class CaseDetailsScreen extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, color: textColor),
+              style: TextStyle(fontSize: 12, color: textColor),
             ),
           ],
         ),
@@ -556,8 +556,7 @@ class CaseDetailsScreen extends StatelessWidget {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: kPrimaryBlue,
                 ),
                 overflow: TextOverflow.ellipsis,

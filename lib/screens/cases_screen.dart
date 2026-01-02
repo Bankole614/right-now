@@ -242,7 +242,6 @@ class _CasesScreenState extends State<CasesScreen> {
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
                 color: isDark ? Colors.grey[400] : Color(0xFF343434),
               ),
               maxLines: 2,

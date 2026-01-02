@@ -210,10 +210,10 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: BoxDecoration(
                 color: bubbleColor,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: Radius.circular(isSent ? 20 : 4),
-                  bottomRight: Radius.circular(isSent ? 4 : 20),
+                  topLeft: const Radius.circular(12),
+                  topRight: const Radius.circular(12),
+                  bottomLeft: Radius.circular(isSent ? 12 : 4),
+                  bottomRight: Radius.circular(isSent ? 4 : 12),
                 ),
               ),
               child: IntrinsicWidth(
