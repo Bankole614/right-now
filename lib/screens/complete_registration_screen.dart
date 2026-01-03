@@ -15,18 +15,11 @@ class CompleteRegistrationScreen extends StatefulWidget {
 
 class _CompleteRegistrationScreenState
     extends State<CompleteRegistrationScreen> {
-  // Image picker
   XFile? _imageFile;
-
-  // Current step in the registration process
   int _currentStep = 0;
-
-  // Form controllers
   final _displayNameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  // Contact method selection
   String _selectedContactMethod = 'In-app';
   final List<String> _contactMethods = ['In-app', 'Phone', 'Email'];
 
@@ -37,7 +30,6 @@ class _CompleteRegistrationScreenState
     super.dispose();
   }
 
-  // Show image upload modal
   void _showImageUploadModal() {
     showUploadImageModal(context, (file) {
       setState(() {
@@ -46,7 +38,6 @@ class _CompleteRegistrationScreenState
     });
   }
 
-  // Validate current step
   bool _validateCurrentStep() {
     if (_currentStep == 0) {
       if (_displayNameController.text.trim().isEmpty) {
@@ -57,7 +48,6 @@ class _CompleteRegistrationScreenState
         _showSnackBar('Please enter your phone number');
         return false;
       }
-      // Basic phone validation
       if (_phoneNumberController.text.trim().length < 10) {
         _showSnackBar('Please enter a valid phone number');
         return false;
@@ -66,7 +56,6 @@ class _CompleteRegistrationScreenState
     return true;
   }
 
-  // Show snackbar message
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,21 +66,16 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Complete registration
   void _completeRegistration() {
     if (!_validateCurrentStep()) return;
-
     _showSnackBar('Registration completed!');
     Navigator.pop(context);
-    // TODO: Implement registration completion logic
-    // Navigator.pushReplacement(context, MaterialPageRoute(...));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final scaffoldBackgroundColor = isDark ? Colors.black : const Color(0xFFF9F9F9);
     final cardBackgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Scaffold(
@@ -108,19 +92,12 @@ class _CompleteRegistrationScreenState
       ),
       body: Column(
         children: [
-          // Step Indicator
+          // Improved Step Indicator
+          SizedBox(height: 14),
           Container(
             color: cardBackgroundColor,
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-            child: Row(
-              children: [
-                _buildStepIndicator(1, 'Basic Info', isActive: _currentStep >= 0),
-                _buildStepLine(isActive: _currentStep > 0),
-                _buildStepIndicator(2, 'Additional', isActive: _currentStep >= 1),
-                _buildStepLine(isActive: _currentStep > 1),
-                _buildStepIndicator(3, 'Preferences', isActive: _currentStep >= 2),
-              ],
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: _buildStepIndicator(isDark),
           ),
           const SizedBox(height: 8),
 
@@ -163,9 +140,96 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // --- Button Builder Logic ---
+  // Improved Step Indicator with better alignment
+  Widget _buildStepIndicator(bool isDark) {
+    return Row(
+      children: [
+        _buildStepItem(
+          stepNumber: 1,
+          label: 'Basic Info',
+          isActive: _currentStep >= 0,
+          isCompleted: _currentStep > 0,
+        ),
+        _buildConnectingLine(isActive: _currentStep > 0),
+        _buildStepItem(
+          stepNumber: 2,
+          label: 'Additional',
+          isActive: _currentStep >= 1,
+          isCompleted: _currentStep > 1,
+        ),
+        _buildConnectingLine(isActive: _currentStep > 1),
+        _buildStepItem(
+          stepNumber: 3,
+          label: 'Preferences',
+          isActive: _currentStep >= 2,
+          isCompleted: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepItem({
+    required int stepNumber,
+    required String label,
+    required bool isActive,
+    required bool isCompleted,
+  }) {
+    final color = isActive ? kPrimaryBlue : const Color(0xFFB6B6B6);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: isActive ? kPrimaryBlue : Colors.transparent,
+            shape: BoxShape.circle,
+            border: Border.all(color: color, width: 2.5),
+          ),
+          child: Center(
+            child: isCompleted
+                ? const Icon(Icons.check, color: Colors.white, size: 20)
+                : Text(
+              '$stepNumber',
+              style: TextStyle(
+                color: isActive ? Colors.white : color,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: 70,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              color: isActive ? kPrimaryBlue : const Color(0xFF8E8E93),
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectingLine({required bool isActive}) {
+    return Expanded(
+      child: Container(
+        height: 2.5,
+        margin: const EdgeInsets.only(bottom: 28),
+        color: isActive ? kPrimaryBlue : const Color(0xFFB6B6B6),
+      ),
+    );
+  }
+
   Widget _buildActionButtons() {
-    // On the first step (index 0), show 'Save' and 'Next' side-by-side
     if (_currentStep == 0) {
       return Row(
         children: [
@@ -176,7 +240,6 @@ class _CompleteRegistrationScreenState
       );
     }
 
-    // On steps 2 and 3 (index 1 and 2), use the stacked layout
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -188,13 +251,11 @@ class _CompleteRegistrationScreenState
           ],
         ),
         const SizedBox(height: 12),
-        // On the last step, show 'Complete', otherwise show 'Next'
         _currentStep == 2 ? _buildCompleteButton() : _buildNextButton(),
       ],
     );
   }
 
-  // --- Individual Button Widgets ---
   Widget _buildBackButton() {
     return OutlinedButton(
       onPressed: () => setState(() => _currentStep--),
@@ -272,55 +333,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // --- Step Indicator Widgets ---
-  Widget _buildStepIndicator(int step, String label, {required bool isActive}) {
-    final color = isActive ? kPrimaryBlue : Color(0xFFB6B6B6);
-    return Column(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: isActive ? kPrimaryBlue : Colors.transparent,
-            shape: BoxShape.circle,
-            border: Border.all(color: color, width: 2),
-          ),
-          child: Center(
-            child: Text(
-              '$step',
-              style: TextStyle(
-                color: isActive ? Colors.white : color,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isActive ? kPrimaryBlue : Color(0xFF262626),
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine({required bool isActive}) {
-    return Expanded(
-      child: Container(
-        height: 2,
-        margin: const EdgeInsets.only(bottom: 34, left: 4, right: 4),
-        color: isActive ? kPrimaryBlue : Color(0xFFB6B6B6),
-      ),
-    );
-  }
-
-  // --- Step Content Widgets ---
   Widget _buildStepContent(bool isDark, Color cardBackgroundColor) {
     switch (_currentStep) {
       case 0:
@@ -334,7 +346,6 @@ class _CompleteRegistrationScreenState
     }
   }
 
-  // Step 1: Basic Info
   Widget _buildBasicInfoStep(bool isDark) {
     return Column(
       children: [
@@ -370,7 +381,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Step 2: Additional Info (Placeholder)
   Widget _buildAdditionalInfoStep(bool isDark) {
     return Center(
       child: Column(
@@ -403,7 +413,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Step 3: Legal Preferences (Placeholder)
   Widget _buildLegalPreferencesStep(bool isDark) {
     return Center(
       child: Column(
@@ -436,7 +445,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Build photo upload widget
   Widget _buildPhotoUpload(bool isDark) {
     return Column(
       children: [
@@ -489,7 +497,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Build text field
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -541,7 +548,6 @@ class _CompleteRegistrationScreenState
     );
   }
 
-  // Build dropdown field
   Widget _buildDropdownField({
     required String label,
     required String? value,
