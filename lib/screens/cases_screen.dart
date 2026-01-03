@@ -307,8 +307,6 @@ class _CasesScreenState extends State<CasesScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Header with title and status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
