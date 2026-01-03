@@ -2,7 +2,6 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:right_now/utils/constants.dart';
-import 'package:right_now/screens/camera_screen.dart';
 
 class UploadDocumentScreen extends StatefulWidget {
   const UploadDocumentScreen({super.key});
@@ -103,10 +102,8 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   }
 
   void _takePhoto() async {
-    final photo = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CameraScreen()),
-    );
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
     if (photo != null && mounted) {
       setState(() {
         _selectedFile = photo;

@@ -1,6 +1,5 @@
 // lib/screens/splash_screen.dart
 import 'package:flutter/material.dart';
-import '../services/secure_storage.dart';
 import '../services/preferences_service.dart';
 import '../utils/constants.dart';
 
@@ -24,12 +23,6 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     try {
-      // 1) check token (secure storage)
-      final token = await SecureStorage.getToken();
-      if (token != null && token.isNotEmpty) {
-        Navigator.of(context).pushReplacementNamed('/home');
-        return;
-      }
 
       // 2) no token -> check onboarding flag via PreferencesService
       final bool onboardingDone = await PreferencesService.isOnboardingDone();
