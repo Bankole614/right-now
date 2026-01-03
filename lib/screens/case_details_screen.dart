@@ -47,7 +47,7 @@ class CaseDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Case Title Card
-            SizedBox(height: 12),
+            SizedBox(height: 8),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16.0),
               padding: const EdgeInsets.all(16),
@@ -76,14 +76,14 @@ class CaseDetailsScreen extends StatelessWidget {
                             Text(
                               'Client',
                               style:
-                              TextStyle(color: subTextColor, fontSize: 12),
+                              TextStyle(color: subTextColor, fontSize: 14),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'John Doe',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: textColor,
                               ),
                             ),
@@ -98,14 +98,14 @@ class CaseDetailsScreen extends StatelessWidget {
                             Text(
                               'Lawyer',
                               style:
-                              TextStyle(color: subTextColor, fontSize: 12),
+                              TextStyle(color: subTextColor, fontSize: 14),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Mark Cole',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: textColor,
                               ),
                             ),

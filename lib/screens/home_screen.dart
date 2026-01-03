@@ -319,7 +319,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           _buildQuickCard(
             color: isDark ? const Color(0xFF2D2B1E) : const Color(0xFFFFFFE5),
-            icon: Icons.chat_outlined,
+            icon: Icons.psychology_outlined,
             iconColor: const Color(0xFFF2C94C),
             title: 'AI Assistant',
             subtitle: 'Get instant guidance on your case. Summarize your documents',

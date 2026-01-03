@@ -344,7 +344,7 @@ class _CasesScreenState extends State<CasesScreen> {
               'Client: ${caseItem['client']} · ${caseItem['type']}',
               style: TextStyle(
                 color: isDark ? Colors.grey[400] : Colors.black54,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 12),
@@ -372,7 +372,6 @@ class _CasesScreenState extends State<CasesScreen> {
                     ],
                   ),
                 ),
-                // This icon is purely decorative now since the whole card is tappable
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
